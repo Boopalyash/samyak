@@ -6,6 +6,7 @@ import {
   TextInput,
   Image,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 
 const SignUpScreen = ({navigation}: any) => {
@@ -51,20 +52,16 @@ const SignUpScreen = ({navigation}: any) => {
   return (
     <View>
       <View style={styles.container}>
-        <View>
-          <TouchableOpacity onPress={handleLeftChevron}>
-            <Image
-              source={require('../assets/images/left_chevron.png')}
-              style={styles.ChevronImage}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-        </View>
-        <View>
-          <Text style={styles.text}>Registration</Text>
-        </View>
+        <TouchableOpacity onPress={handleLeftChevron}>
+          <Image
+            source={require('../assets/images/left_chevron.png')}
+            style={styles.ChevronImage}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+        <Text style={styles.text}>Registration</Text>
       </View>
-      <View style={styles.card}>
+      <ScrollView style={styles.card}>
         <Image
           source={require('../assets/images/Samyak_Logo.png')}
           style={styles.cardImage}
@@ -123,18 +120,14 @@ const SignUpScreen = ({navigation}: any) => {
           </TouchableOpacity>
         </View>
 
-        <View>
-          <TouchableOpacity onPress={handlesignUp} style={styles.loginButton}>
-            <Text style={styles.loginButtonText}>Sign Up</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity onPress={handlesignUp} style={styles.loginButton}>
+          <Text style={styles.loginButtonText}>Sign Up</Text>
+        </TouchableOpacity>
 
         <View style={styles.VersionView}>
-          <View>
-            <Text>Version:0.0.1(12)</Text>
-          </View>
+          <Text>Version:0.0.1(12)</Text>
         </View>
-      </View>
+      </ScrollView>
     </View>
   );
 };

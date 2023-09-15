@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TextInput,
   Image,
+  Alert,
   TouchableOpacity,
 } from 'react-native';
 
@@ -33,9 +34,15 @@ const LoginScreen = ({navigation}: any) => {
         userDetails,
       });
     } else if (LoginAPIRes.isError) {
+      const errorMessage = LoginAPIRes.error?.data?.Message[0]?.Message;
       setIsError(true);
+      showAlert('Error', errorMessage);
     }
   }, [LoginAPIRes]);
+
+  const showAlert = (title: string, message: string) => {
+    Alert.alert(title, message, [], {cancelable: false});
+  };
 
   // onClick Function
   const handleLogIn = async () => {

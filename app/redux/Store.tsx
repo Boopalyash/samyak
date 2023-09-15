@@ -26,6 +26,16 @@ import manageBranch from './slice/ManageBranchPostSlice';
 import showAddress from './slice/ManageShowAddressSlice';
 import manageMemberList from './slice/ManageMemberListSlice';
 import addMemberList from './slice/AddMemberListSlice';
+import updateAddress from './slice/UpdateAddressSlice';
+import deleteAddress from './slice/DeleteAddressSlice';
+import testTrendsTest from './slice/TestTrendsTestSlice';
+import editPatient from './slice/EditPatientSlice';
+import deletePatient from './slice/DeletePatientSlice';
+import trendsPatientList from './slice/TrendsPatientListSlice';
+import editGender from './slice/EditGenderSlice';
+import relationship from './slice/RelationshipSlice';
+import title from './slice/TitleSlice';
+import chooseBoneProfile from './slice/LabChooseBoneSlice';
 
 const reducers = combineReducers({
   [api.reducerPath]: api.reducer,
@@ -41,6 +51,16 @@ const reducers = combineReducers({
   showAddress,
   manageMemberList,
   addMemberList,
+  updateAddress,
+  deleteAddress,
+  testTrendsTest,
+  editPatient,
+  deletePatient,
+  trendsPatientList,
+  editGender,
+  relationship,
+  title,
+  chooseBoneProfile,
 });
 
 const persistConfig = {

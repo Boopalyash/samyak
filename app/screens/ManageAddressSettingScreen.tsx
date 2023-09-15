@@ -6,48 +6,65 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  Alert,
 } from 'react-native';
-import {useSelector} from 'react-redux';
-import {RootState} from '../redux/Store';
 import HeaderCommonComponentScreen from '../components/HeaderCommonComponent';
 import {useSamyakAddressPostMutation} from '../redux/service/ManageAddressPostService';
-import {useSamyakManageShowAddressPostMutation} from '../redux/service/ManageShowAddressService';
+import {useSamyakDeleteAddressPostMutation} from '../redux/service/DeleteAddressService';
+import {useSelector} from 'react-redux';
 
 const ManageAddressSettingsScreen = ({navigation}: any) => {
   const [getAddressAPIReq, getAddressAPIRes] = useSamyakAddressPostMutation();
-  const [showAddressAPIReq] = useSamyakManageShowAddressPostMutation();
-
-  const showAddressData = useSelector(
-    (state: RootState) => state.showAddress.samyakDetailsManageShowAddressPost,
+  const [deleteAddressAPIReq, deleteAddressAPIRes] =
+    useSamyakDeleteAddressPostMutation();
+  const [addresData, setAddressData] = useState([]);
+  const addressSelector = useSelector(
+    (state: RootState) =>
+      state.getAddressPost.samyakAddressDetailsPost[0].User_Address,
   );
+  console.log(addressSelector, 'addressData');
+  const showAddressObj = {
+    userName: '7358722588',
+  };
+  console.log(deleteAddressAPIRes, 'deleteAddressAPIRes');
 
-  //api for get address
   useEffect(() => {
-    if (getAddressAPIRes.isSuccess) {
-      console.log('success');
-      navigation.navigate('AddAddress');
-    } else {
-      console.log('error');
+    if (deleteAddressAPIRes?.isSuccess) {
+      showAlert('Success', deleteAddressAPIRes?.data?.Message[0]?.Message);
+      getAddressAPIReq(showAddressObj);
+    } else if (deleteAddressAPIRes?.isError) {
+      showAlert('Error', deleteAddressAPIRes?.error?.data?.Message[0]?.Message);
     }
-  }, [getAddressAPIRes]);
+  }, [deleteAddressAPIRes]);
 
-  //api for show address
-  useEffect(() => {
-    const showAddressObj = {
-      userName: '7358722588',
-    };
-    showAddressAPIReq(showAddressObj);
-  }, []);
-
-  const handleAdd = () => {
-    let getAddressObj = {
-      Username: '7358722588',
-    };
-    getAddressAPIReq(getAddressObj);
+  const showAlert = (title, message) => {
+    Alert.alert(title, message, [], {cancelable: false});
   };
 
-  const handleEdit = () => {
+  useEffect(() => {
+    getAddressAPIReq(showAddressObj);
+  }, []);
+  useEffect(() => {
+    if (getAddressAPIRes?.isSuccess) {
+      console.log('value setted');
+
+      setAddressData(getAddressAPIRes?.data?.Message[0]?.User_Address);
+    }
+  }, [getAddressAPIRes, addressSelector]);
+  const handleDelete = item => {
+    let credentials = {
+      UserName: '7358722588',
+      Address_Type: '01',
+    };
+    deleteAddressAPIReq(credentials);
+  };
+
+  const handleAdd = () => {
     navigation.navigate('AddAddress');
+  };
+
+  const handleEdit = (item) => {
+    navigation.navigate('EditAddress',{item});
   };
 
   const handleButtonPresss = () => {
@@ -62,7 +79,7 @@ const ManageAddressSettingsScreen = ({navigation}: any) => {
             <Text style={{color: '#2f2f2f'}}>{item?.Address_Type_Desc}</Text>
           </View>
           <View style={{left: 140}}>
-            <TouchableOpacity onPress={handleEdit}>
+            <TouchableOpacity onPress={() => handleEdit(item)}>
               <Image
                 source={require('../assets/images/edit.png')}
                 style={styles.EditImg}
@@ -70,7 +87,7 @@ const ManageAddressSettingsScreen = ({navigation}: any) => {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => handleDelete(item)}>
             <Image
               source={require('../assets/images/delete.png')}
               style={styles.DeleteImg}
@@ -79,7 +96,7 @@ const ManageAddressSettingsScreen = ({navigation}: any) => {
         </View>
 
         <View style={{left: 10, marginTop: 10}}>
-          <Text style={{color: '#2a2a2a'}}>{item.address}</Text>
+          <Text style={{color: '#2a2a2a'}}>{item?.Full_Address}</Text>
         </View>
       </View>
     );
@@ -106,7 +123,7 @@ const ManageAddressSettingsScreen = ({navigation}: any) => {
       </View>
 
       <FlatList
-        data={showAddressData.Message}
+        data={addresData}
         renderItem={renderAddressItem}
         keyExtractor={item => item.id}
       />

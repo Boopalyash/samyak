@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   image: {
     width: 30,
     height: 30,
-    marginLeft: 40,
+    marginLeft: 20,
   },
   LocationView: {
     flexDirection: 'row',
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f2f2f2',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 30,
+    marginLeft: 20,
   },
   circleText: {
     color: 'black',

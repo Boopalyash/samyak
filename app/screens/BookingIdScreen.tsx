@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
   image: {
     width: 25,
     height: 25,
-    marginLeft: 40,
+    marginLeft: 20,
     marginTop: 3,
   },
   LocationView: {
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   innerView: {
-    padding: 10,
+    padding: 5,
     borderRadius: 10,
   },
   input: {
@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f2f2f2',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 30,
+    marginLeft: 20,
   },
   CircleText: {
     color: 'black',

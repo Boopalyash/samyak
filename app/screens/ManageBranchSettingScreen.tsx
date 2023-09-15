@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
   View,
   Text,
@@ -6,17 +6,19 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  TouchableWithoutFeedback,
+  ScrollView,
 } from 'react-native';
-import {TextInput, Card} from 'react-native-paper';
+import {Card} from 'react-native-paper';
 import HeaderCommonComponentScreen from '../components/HeaderCommonComponent';
 import {useSamyakManageBranchPostMutation} from '../redux/service/ManageBranchPostService';
 
 const ManageBranchSettingScreen = ({navigation}: any) => {
-  const [inputValue, setInputValue] = useState('');
   const [showOptions, setShowOptions] = useState(false);
-  const [dropdownVisible, setDropdownVisible] = useState(false);
   const [selectedOptionIndex, setSelectedOptionIndex] = useState(-1);
   const [branchData, setBranchData] = useState([]);
+
+  const cardRef = useRef(null);
 
   const [manageBranchAPIReq] = useSamyakManageBranchPostMutation();
 
@@ -35,26 +37,28 @@ const ManageBranchSettingScreen = ({navigation}: any) => {
   }, []);
 
   const openDropdown = () => {
-    setDropdownVisible(true);
+    setShowOptions(true);
   };
 
   const closeDropdown = () => {
-    setDropdownVisible(false);
+    setShowOptions(false);
   };
 
   const handleOptionSelect = (option: string, index: number) => {
-    setInputValue(option);
     setSelectedOptionIndex(index);
     closeDropdown();
   };
 
   const handleArrowImagePress = () => {
-    setShowOptions(!showOptions);
     openDropdown();
   };
 
-  const handleButtonPresss = () => {
+  const handleButtonPress = () => {
     navigation.navigate('Settings');
+  };
+
+  const handleOverlayPress = () => {
+    closeDropdown();
   };
 
   return (
@@ -62,34 +66,30 @@ const ManageBranchSettingScreen = ({navigation}: any) => {
       <View>
         <HeaderCommonComponentScreen text={'Manage Branch'} />
       </View>
-      <View style={styles.contentContainer}>
+      <ScrollView style={styles.contentContainer}>
         <View style={styles.selectTextContainer}>
           <Text style={styles.selectText}>Select Branch</Text>
         </View>
 
-        <View style={styles.inputWrapper}>
-          <TextInput
-            style={styles.inputText}
-            value={inputValue}
-            onChangeText={text => setInputValue(text)}
-            mode="outlined"
-            onFocus={openDropdown}
-            theme={{
-              colors: {
-                primary: 'black',
-              },
-            }}
+        <TouchableOpacity
+          style={styles.inputWrapper}
+          onPress={handleArrowImagePress}>
+          <Text style={styles.inputText}>
+            {selectedOptionIndex !== -1
+              ? branchData[selectedOptionIndex].Branch_Name
+              : 'Select Branch'}
+          </Text>
+          <Image
+            source={require('../assets/images/downArrow.png')}
+            style={styles.arrowImage}
           />
-          <TouchableOpacity onPress={handleArrowImagePress}>
-            <Image
-              source={require('../assets/images/downArrow.png')}
-              style={styles.arrowImage}
-            />
-          </TouchableOpacity>
-        </View>
-        {dropdownVisible && (
-          <View style={styles.dropdownContainer}>
-            <Card elevation={4} style={styles.card}>
+        </TouchableOpacity>
+      </ScrollView>
+
+      {showOptions && (
+        <TouchableWithoutFeedback onPress={handleOverlayPress}>
+          <View style={styles.overlay}>
+            <Card elevation={4} style={styles.card} ref={cardRef}>
               <FlatList
                 data={branchData}
                 renderItem={({item, index}) => (
@@ -102,15 +102,14 @@ const ManageBranchSettingScreen = ({navigation}: any) => {
                     <Text>{item.Branch_Name}</Text>
                   </TouchableOpacity>
                 )}
-                keyExtractor={item => item.Firm_No}
               />
             </Card>
           </View>
-        )}
-      </View>
+        </TouchableWithoutFeedback>
+      )}
 
       <View style={styles.BackButtonView}>
-        <TouchableOpacity style={styles.buttons} onPress={handleButtonPresss}>
+        <TouchableOpacity style={styles.buttons} onPress={handleButtonPress}>
           <Image
             source={require('../assets/images/backArrowBlack.png')}
             style={styles.buttonImages}
@@ -131,24 +130,26 @@ const styles = StyleSheet.create({
     backgroundColor: '#E0E0E0',
     padding: 10,
   },
-
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#000',
+    paddingHorizontal: 10,
+    borderRadius: 5,
   },
   inputText: {
     flex: 1,
-    height: 50,
   },
   arrowImage: {
     width: 12,
     height: 12,
-    right: 30,
     tintColor: '#9e9e9e',
   },
   contentContainer: {
-    marginLeft: 20,
-    marginTop: 130,
+    marginTop: 120,
+    padding: 10,
   },
   selectTextContainer: {
     marginBottom: 10,
@@ -161,11 +162,12 @@ const styles = StyleSheet.create({
     padding: 20,
     borderBottomColor: '#747577',
   },
-  dropdownContainer: {
-    alignSelf: 'center',
-    width: '90%',
-    marginTop: 10,
-    right: 8,
+  overlay: {
+    position: 'absolute',
+    top: 220,
+    left: 10,
+    right: 10,
+    bottom: 150,
   },
   BackButtonView: {
     width: '30%',

@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   image: {
     width: 25,
     height: 25,
-    marginLeft: 30,
+    marginLeft: 20,
     top: 20,
   },
   circle: {
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     top: 16,
-    marginLeft: 30,
+    marginLeft: 20,
   },
   circleText: {
     color: 'black',

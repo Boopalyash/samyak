@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
   Text,
@@ -6,26 +6,58 @@ import {
   Image,
   FlatList,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '../redux/Store';
 import {useSamyakManageMembersListPostMutation} from '../redux/service/ManageMemberListService';
+import {useSamyakDeletePatientPostMutation} from '../redux/service/DeletePatientService';
 
 const ManageMembersSettingScreen = ({navigation}: any) => {
+  // to show members list
   const [manageMembersAPIReq] = useSamyakManageMembersListPostMutation();
+  // to delete the member list
+  const [deletePatientAPIReq, deletePatientAPIRes] =
+    useSamyakDeletePatientPostMutation();
 
   const manageMembersData = useSelector(
     (state: RootState) =>
       state.manageMemberList.samyakDetailsManageMembersListPost,
   );
-  console.log('datay6777877', manageMembersData);
+  const manageMembersObj = {
+    userName: '7358722588',
+  };
+  console.log('deletePatientAPIRes', deletePatientAPIRes);
 
   useEffect(() => {
-    const manageMembersObj = {
-      userName: '7358722588',
-    };
+    if (deletePatientAPIRes?.isSuccess) {
+      showAlert('Success', deletePatientAPIRes?.data?.Message[0]?.Message);
+      manageMembersAPIReq(manageMembersObj);
+    } else if (deletePatientAPIRes?.isError) {
+      showAlert('Error', deletePatientAPIRes?.error?.data?.Message[0]?.Message);
+    }
+  }, [deletePatientAPIRes]);
+
+  const showAlert = (title, message) => {
+    Alert.alert(title, message, [], {cancelable: false});
+  };
+
+  //useEffect show the members list
+  useEffect(() => {
     manageMembersAPIReq(manageMembersObj);
   }, []);
+
+  const handleDelete = item => {
+    let credentials = {
+      UserName: '7358722588',
+      Pt_Code: item?.Pt_Code,
+    };
+    deletePatientAPIReq(credentials);
+  };
+
+  const handleAdd = () => {
+    navigation.navigate('AddMember');
+  };
 
   const handleProfile = () => {
     navigation.navigate('Settings');
@@ -35,8 +67,8 @@ const ManageMembersSettingScreen = ({navigation}: any) => {
     navigation.navigate('Settings');
   };
 
-  const handleAdd = () => {
-    navigation.navigate('AddMember');
+  const handleEdit = (item) => {
+    navigation.navigate('EditMember', {item});
   };
 
   const renderMemberItem = ({item}: any) => {
@@ -54,7 +86,7 @@ const ManageMembersSettingScreen = ({navigation}: any) => {
           <Text>{item.RelationShip_Name}</Text>
         </View>
         <View style={styles.textContainer4}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => handleEdit(item)}>
             <Image
               source={require('../assets/images/edit.png')}
               style={{width: 20, height: 20, tintColor: '#59adff'}}
@@ -62,7 +94,7 @@ const ManageMembersSettingScreen = ({navigation}: any) => {
           </TouchableOpacity>
         </View>
         <View style={styles.textContainer5}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => handleDelete(item)}>
             <Image
               source={require('../assets/images/delete.png')}
               style={{width: 20, height: 20, tintColor: '#e12c2c'}}
@@ -114,6 +146,7 @@ const ManageMembersSettingScreen = ({navigation}: any) => {
         data={manageMembersData[0]?.Patient_Detail}
         renderItem={renderMemberItem}
         keyExtractor={item => item.Pt_Code}
+        contentContainerStyle={styles.flatListContent}
       />
 
       <View style={styles.BackButtonView}>
@@ -157,7 +190,7 @@ const styles = StyleSheet.create({
   image: {
     width: 30,
     height: 30,
-    marginLeft: 40,
+    marginLeft: 20,
   },
   circle: {
     width: 30,
@@ -166,7 +199,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f2f2f2',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 30,
+    marginLeft: 20,
   },
   circleText: {
     color: 'black',
@@ -241,5 +274,8 @@ const styles = StyleSheet.create({
   textContainer5: {
     width: '10%',
     alignItems: 'center',
+  },
+  flatListContent: {
+    paddingBottom: 80,
   },
 });

@@ -9,47 +9,35 @@ import {
   ScrollView,
   Alert,
 } from 'react-native';
-import {useSamyakAddAddressPostMutation} from '../redux/service/ManageAddNewAddressPostService';
+import {useSamyakUpdateAddressPostMutation} from '../redux/service/UpdateAddressService';
+import {useRoute} from '@react-navigation/native';
 import {useSamyakAddressPostMutation} from '../redux/service/ManageAddressPostService';
 
-const AddAddressSettingScreen = ({navigation}: any) => {
-  const [address, setAddress] = useState('');
-  const [street, setStreet] = useState('');
-  const [place, setPlace] = useState('');
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
-  const [pincode, setPincode] = useState('');
-  const [landmark, setLandmark] = useState('');
-  const [longitude, setLongitude] = useState('');
-  const [latitude, setLatitude] = useState('');
-  const [selectedAddressType, setSelectedAddressType] = useState('');
-  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-  const [getAddressAPIReq, getAddressAPIRes] = useSamyakAddressPostMutation();
-  const addressTypes = [
-    {name: 'Home', id: '01'},
-    {name: 'Work', id: '02'},
-    {name: 'Others', id: '03'},
-  ];
+const EditAddressScreen = ({navigation}: any) => {
+  const route = useRoute();
+  const editData = route.params;
+  console.log(editData, 'datardfgdfk');
 
-  const showAlert = (title: string, message: string) => {
+  const [address, setAddress] = useState(editData?.item?.Address_Type_Desc);
+  const [street, setStreet] = useState(editData?.item?.Street);
+  const [place, setPlace] = useState(editData?.item?.Place);
+  const [city, setCity] = useState(editData?.item?.City);
+  const [state, setState] = useState(editData?.item?.State);
+  const [pincode, setPincode] = useState(editData?.item?.PinCode);
+  const [landmark, setLandmark] = useState(editData?.item?.Landmark);
+  const [longitude, setLongitude] = useState(editData?.item?.Longitude);
+  const [latitude, setLatitude] = useState(editData?.item?.Latitude);
+
+  const [getAddressAPIReq] = useSamyakAddressPostMutation();
+  const [updateAddressAPIReq, updateAddressAPIRes] =
+    useSamyakUpdateAddressPostMutation();
+  console.log(updateAddressAPIRes, 'editAddressData');
+  const showAlert = (title, message) => {
     Alert.alert(title, message, [], {cancelable: false});
   };
-  const handleAddressTypeSelect = (type: string) => {
-    setSelectedAddressType(type.id);
-    setAddress(type.name);
-    setIsDropdownVisible(false);
-  };
-
-  const toggleDropdown = () => {
-    setIsDropdownVisible(!isDropdownVisible);
-  };
-
-  const [addAddressAPIReq, addAddressAPIRes] =
-    useSamyakAddAddressPostMutation();
-
-  const handleSubmit = async () => {
-    let addAddressObj = {
-      Address_Type: selectedAddressType,
+  const handleUpdate = async () => {
+    let updateAddressObj = {
+      Address_Type: '02',
       Street: street,
       Place: place,
       City: city,
@@ -57,24 +45,27 @@ const AddAddressSettingScreen = ({navigation}: any) => {
       Pincode: pincode,
       Latitude: latitude,
       Longitude: longitude,
-      Username: 7358722588,
-      Landmark: '',
+      Username: '7358722588',
+      Landmark: landmark,
     };
-    await addAddressAPIReq(addAddressObj);
+    console.log('updateAddressAPI)))))))))', updateAddressObj);
+    await updateAddressAPIReq(updateAddressObj);
   };
 
   useEffect(() => {
-    if (addAddressAPIRes.isSuccess && addAddressAPIRes?.data?.Code === 200) {
-      showAlert('Success', 'Address Added Successfully');
-      const manageAddressObj = {
+    if (updateAddressAPIRes.isSuccess) {
+      console.log('success');
+      showAlert('Success', 'Address Updated Successfully');
+
+      const showAddressObj = {
         userName: '7358722588',
       };
-      getAddressAPIReq(manageAddressObj);
-      navigation.navigate('ManageAddress', {getAddressAPIRes});
-    } else if (addAddressAPIRes?.isError) {
-      showAlert('Error', addAddressAPIRes?.error?.data?.Message[0]?.Message);
+      getAddressAPIReq(showAddressObj);
+      navigation.navigate('ManageAddress');
+    } else if (updateAddressAPIRes.isError) {
+      showAlert('Error', updateAddressAPIRes?.error?.data?.Message[0]?.Message);
     }
-  }, [addAddressAPIRes]);
+  }, [updateAddressAPIRes]);
 
   const handleCross = () => {
     navigation.navigate('ManageAddress');
@@ -84,7 +75,7 @@ const AddAddressSettingScreen = ({navigation}: any) => {
     <ScrollView style={styles.MainContainer}>
       <View style={styles.AddMemberView}>
         <View>
-          <Text style={styles.headerText}>Add Address</Text>
+          <Text style={styles.headerText}>Edit Address</Text>
         </View>
         <View>
           <TouchableOpacity onPress={handleCross}>
@@ -108,30 +99,16 @@ const AddAddressSettingScreen = ({navigation}: any) => {
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          placeholder="Select Address Type"
+          placeholder="Address Type"
+          onChangeText={setAddress}
           value={address}
-          onFocus={toggleDropdown}
         />
-        <TouchableOpacity
-          style={styles.touchableContainer}
-          onPress={toggleDropdown}>
+        <TouchableOpacity style={styles.touchableContainer}>
           <Image
             source={require('../assets/images/downArrow.png')}
             style={styles.downArrow}
           />
         </TouchableOpacity>
-        {isDropdownVisible && (
-          <View style={styles.dropdown}>
-            {addressTypes.map(type => (
-              <TouchableOpacity
-                key={type.name}
-                style={styles.dropdownItem}
-                onPress={() => handleAddressTypeSelect(type)}>
-                <Text>{type.name}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        )}
       </View>
 
       <View style={styles.inputContainer}>
@@ -206,15 +183,15 @@ const AddAddressSettingScreen = ({navigation}: any) => {
         />
       </View>
 
-      <TouchableOpacity onPress={handleSubmit}>
+      <TouchableOpacity onPress={handleUpdate}>
         <View style={styles.SubmitButtonView}>
-          <Text style={styles.ButtonText}>Submit</Text>
+          <Text style={styles.ButtonText}>Update</Text>
         </View>
       </TouchableOpacity>
     </ScrollView>
   );
 };
-export default AddAddressSettingScreen;
+export default EditAddressScreen;
 const styles = StyleSheet.create({
   MainContainer: {
     flex: 1,
@@ -282,20 +259,5 @@ const styles = StyleSheet.create({
     color: 'white',
     alignSelf: 'center',
     fontSize: 20,
-  },
-  dropdownItem: {
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  dropdown: {
-    position: 'absolute',
-    marginTop: -50,
-    left: 15,
-    right: 15,
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
   },
 });

@@ -1,7 +1,70 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {useSelector} from 'react-redux';
+import {useSamyakTestTrendsPostMutation} from '../redux/service/TestTrendsTest';
+import {useSamyakTrendsPatientListPostMutation} from '../redux/service/TrendsPatientList';
 
-const TestTrendsScreen = () => {
+const TestTrendsScreen = ({navigation}: any) => {
+  const [setTestData] = useState([]);
+  const [setPatientListData] = useState([]);
+
+  // Api for test
+  const [testTrendsAPIReq, testTrendsAPIRes] =
+    useSamyakTestTrendsPostMutation();
+
+  // useEffect for test
+  useEffect(() => {
+    const testTrendsTestObj = {
+      userName: '7358722588',
+      Pt_Code: '0100511265',
+      Test_Code: '000245',
+      Test_Sub_Code: '',
+    };
+    testTrendsAPIReq(testTrendsTestObj)
+      .unwrap()
+      .then(response => {
+        console.log(response, 'resp)');
+
+        if (response.SuccessFlag === 'true') {
+          setTestData(response.Message);
+        }
+      });
+  }, []);
+
+  const handleArrowImagePress = () => {
+    console.log(testTrendsAPIRes, 'testData');
+  };
+
+  // Api for Patient
+  const [patientListAPIReq, patientListAPIRes] =
+    useSamyakTrendsPatientListPostMutation();
+
+  // useEffect for Patient
+  useEffect(() => {
+    const trendsPatientListObj = {
+      userName: '7358722588',
+      Pt_Code: '0100511265',
+      // Test_Code: '000245',
+    };
+    patientListAPIReq(trendsPatientListObj)
+      .unwrap()
+      .then(response => {
+        console.log(response, 'patientList)');
+
+        if (response.SuccessFlag === 'true') {
+          setPatientListData(response.Message);
+        }
+      });
+  }, []);
+
+  const handlePatientArrow = () => {
+    console.log(patientListAPIRes, 'testData');
+  };
+
+  const handleProfile = () => {
+    navigation.navigate('Profile');
+  };
+
   return (
     <View style={styles.MainContainer}>
       <View style={styles.container}>
@@ -16,10 +79,11 @@ const TestTrendsScreen = () => {
               source={require('../assets/images/bellwhite.png')}
               style={styles.image}
             />
-            <Image
-              source={require('../assets/images/bellwhite.png')}
-              style={styles.image}
-            />
+            <TouchableOpacity onPress={handleProfile}>
+              <View style={styles.circle}>
+                <Text style={styles.circleText}>RA</Text>
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -37,13 +101,22 @@ const TestTrendsScreen = () => {
           <Text style={styles.SelectPatientText}>Select Patient</Text>
         </View>
         <View>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handlePatientArrow}>
             <Image
               source={require('../assets/images/downArrow.png')}
               style={styles.DownArrowImg}
             />
           </TouchableOpacity>
         </View>
+        {patientListAPIRes?.isSuccess &&
+          patientListAPIRes?.data?.Code === 200 &&
+          patientListAPIRes?.data?.Message.map(item => {
+            return (
+              <Text style={{marginTop: 10, marginLeft: 12, fontSize: 16}}>
+                {item.Test_Sub_Code}
+              </Text>
+            );
+          })}
       </View>
 
       <View style={styles.cardView}>
@@ -64,7 +137,7 @@ const TestTrendsScreen = () => {
             <Text style={styles.SelectPatientText1}>Select Test</Text>
           </View>
           <View>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleArrowImagePress}>
               <Image
                 source={require('../assets/images/downArrow.png')}
                 style={styles.DownArrowImg1}
@@ -72,9 +145,15 @@ const TestTrendsScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
-        <Text style={{marginTop: 10, marginLeft: 12, fontSize: 16}}>
-          # CHOLESTEROL
-        </Text>
+        {testTrendsAPIRes?.isSuccess &&
+          testTrendsAPIRes?.data?.Code === 200 &&
+          testTrendsAPIRes?.data?.Message.map(item => {
+            return (
+              <Text style={{marginTop: 10, marginLeft: 12, fontSize: 16}}>
+                {item.Service_Name}
+              </Text>
+            );
+          })}
       </View>
 
       <View style={{flexDirection: 'row', alignSelf: 'flex-end', right: 20}}>
@@ -138,7 +217,7 @@ const styles = StyleSheet.create({
   image: {
     width: 30,
     height: 30,
-    marginLeft: 40,
+    marginLeft: 20,
   },
   LocationView: {
     flexDirection: 'row',
@@ -192,5 +271,31 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderRightColor: 'gray',
     paddingRight: 20,
+  },
+  SelectPatientTextContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+  },
+  TestOption: {
+    fontSize: 16,
+    color: '#60b450',
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+  },
+  circle: {
+    width: 30,
+    height: 30,
+    borderRadius: 50,
+    backgroundColor: '#f2f2f2',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 20,
+    marginTop: 2,
+  },
+  circleText: {
+    color: 'black',
+    fontSize: 10,
   },
 });

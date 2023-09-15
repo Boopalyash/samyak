@@ -12,6 +12,10 @@ import ProfileScreen from '../screens/ProfileScreen';
 import SearchTestLabScreen from '../screens/SearchTestLabScreen';
 import AddManageMembersSettingScreen from '../screens/AddManageMembersSettingScree';
 import EmergencyAlertScreen from '../screens/EmergencyAlertScreen';
+import EditAddressScreen from '../screens/EditAddressScreen';
+import EditMembersScreen from '../screens/EditMembersScreen';
+import HealthTipsDetailScreen from '../screens/HealthTipsDetailsScreen';
+import UploadPrescriptionScreen from '../screens/UploadPrescriptionScreen';
 
 const stack = createStackNavigator();
 
@@ -34,6 +38,13 @@ const ApplicationNavigation = () => {
         <stack.Screen
           name="AddMember"
           component={AddManageMembersSettingScreen}
+        />
+        <stack.Screen name="EditAddress" component={EditAddressScreen} />
+        <stack.Screen name="EditMember" component={EditMembersScreen} />
+        <stack.Screen name="HealthTips" component={HealthTipsDetailScreen} />
+        <stack.Screen
+          name="UploadDescription"
+          component={UploadPrescriptionScreen}
         />
       </stack.Navigator>
     </NavigationContainer>

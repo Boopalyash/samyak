@@ -116,23 +116,51 @@ const DashBoardScreen = ({navigation}: any) => {
   );
 
   const renderHealthTipsItem = ({item}: any) => (
+    //   <LinearGradient
+    //     colors={['#002d87', '#000000']}
+    //     start={{x: 0, y: 1}}
+    //     end={{x: 10, y: 1}}
+    //     style={styles.SquareCard1}>
+    //     <View style={{marginTop: 15, left: 10}}>
+    //       <Text style={{color: 'white', fontSize: 18, fontWeight: 600}}>
+    //         {item.Updated_Date}
+    //       </Text>
+    //     </View>
+    //     <View style={{marginTop: 10, left: 10}}>
+    //       <Text style={{color: 'white', fontSize: 18, fontWeight: 600}}>
+    //         {item.Health_Title}
+    //       </Text>
+    //     </View>
+    //     <View style={{alignSelf: 'flex-end', paddingHorizontal: 15}}>
+    //       <TouchableOpacity onPress={toggleDescription}>
+    //         <Text style={{color: 'white', fontWeight: '900'}}>Read More</Text>
+    //       </TouchableOpacity>
+    //       {showFullDescription && (
+    //         <Text style={{color: 'white'}}>{item.Health_Desc}</Text>
+    //       )}
+    //     </View>
+    //   </LinearGradient>
+    // );
     <LinearGradient
       colors={['#002d87', '#000000']}
       start={{x: 0, y: 1}}
       end={{x: 10, y: 1}}
       style={styles.SquareCard1}>
       <View style={{marginTop: 15, left: 10}}>
-        <Text style={{color: 'white', fontSize: 18, fontWeight: 600}}>
+        <Text style={{color: 'white', fontSize: 18, fontWeight: '600'}}>
           {item.Updated_Date}
         </Text>
       </View>
       <View style={{marginTop: 10, left: 10}}>
-        <Text style={{color: 'white', fontSize: 18, fontWeight: 600}}>
+        <Text style={{color: 'white', fontSize: 18, fontWeight: '600'}}>
           {item.Health_Title}
         </Text>
       </View>
       <View style={{alignSelf: 'flex-end', paddingHorizontal: 15}}>
-        <TouchableOpacity onPress={toggleDescription}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('HealthTips', {healthTipData: item});
+          }}>
           <Text style={{color: 'white', fontWeight: '900'}}>Read More</Text>
         </TouchableOpacity>
         {showFullDescription && (
@@ -246,11 +274,7 @@ const DashBoardScreen = ({navigation}: any) => {
                 </Text>
               </View>
 
-              <FlatList
-                data={promotionData}
-                renderItem={renderPromotionCard}
-                // keyExtractor={(item, index) => `${item.Coupon_Code}_${index}`}
-              />
+              <FlatList data={promotionData} renderItem={renderPromotionCard} />
             </View>
           )}
 
@@ -296,7 +320,7 @@ const styles = StyleSheet.create({
   image: {
     width: 25,
     height: 25,
-    marginLeft: 40,
+    marginLeft: 20,
     marginTop: 5,
   },
 
@@ -350,8 +374,9 @@ const styles = StyleSheet.create({
     height: 150,
     backgroundColor: '#002d87',
     alignSelf: 'center',
-    marginTop: 20,
+    marginTop: 15,
     borderRadius: 8,
+    marginBottom: 40,
   },
   SquareCard2: {
     width: '90%',
@@ -373,7 +398,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f2f2f2',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 30,
+    marginLeft: 20,
     marginTop: 2,
   },
   circleText: {

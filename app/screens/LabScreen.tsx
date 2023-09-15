@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import SegmentedControlTab from 'react-native-segmented-control-tab';
 import {Calendar} from 'react-native-calendars';
+import {RadioButton} from 'react-native-paper';
 
 const LabScreen = ({navigation}: any) => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -21,6 +22,7 @@ const LabScreen = ({navigation}: any) => {
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
   const [voucherCode, setVoucherCode] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('online');
 
   const handleNext = () => {
     if (currentStep < 4) {
@@ -59,7 +61,7 @@ const LabScreen = ({navigation}: any) => {
   const isBookingDetailsVisible = currentStep === 4;
 
   const handleButtonPress = () => {
-    console.log('Button Pressed!');
+    navigation.navigate('UploadDescription');
   };
 
   const handleSearch = () => {
@@ -495,15 +497,45 @@ const LabScreen = ({navigation}: any) => {
               paddingHorizontal: 10,
             }}>
             <View style={styles.OnlinePaymentView}>
-              <TouchableOpacity>
-                <View style={styles.DotViewOnline} />
+              <TouchableOpacity onPress={() => setPaymentMethod('online')}>
+                <View
+                  style={[
+                    styles.radioButtonContainer,
+                    {
+                      backgroundColor:
+                        paymentMethod === 'online' ? 'red' : 'transparent',
+                    },
+                  ]}>
+                  <RadioButton
+                    value="online"
+                    status={
+                      paymentMethod === 'online' ? 'checked' : 'unchecked'
+                    }
+                    onPress={() => setPaymentMethod('online')}
+                    color="yellow"
+                  />
+                </View>
               </TouchableOpacity>
               <Text style={{left: 10}}>Online Payment</Text>
             </View>
 
             <View style={styles.OnlinePaymentView}>
-              <TouchableOpacity>
-                <View style={styles.DotViewCash} />
+              <TouchableOpacity onPress={() => setPaymentMethod('cash')}>
+                <View
+                  style={[
+                    styles.radioButtonContainer,
+                    {
+                      backgroundColor:
+                        paymentMethod === 'cash' ? 'yellow' : 'transparent',
+                    },
+                  ]}>
+                  <RadioButton
+                    value="cash"
+                    status={paymentMethod === 'cash' ? 'checked' : 'unchecked'}
+                    onPress={() => setPaymentMethod('cash')}
+                    color="white"
+                  />
+                </View>
               </TouchableOpacity>
               <Text style={{left: 10}}>Cash Payment</Text>
             </View>
@@ -560,7 +592,7 @@ const styles = StyleSheet.create({
   image: {
     width: 30,
     height: 30,
-    marginLeft: 40,
+    marginLeft: 20,
   },
   LocationView: {
     flexDirection: 'row',
@@ -765,7 +797,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f2f2f2',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 30,
+    marginLeft: 20,
     marginTop: 2,
   },
   circleText: {
@@ -865,9 +897,8 @@ const styles = StyleSheet.create({
   inputContainer2: {
     flexDirection: 'row',
     backgroundColor: '#c5c5c5',
-    padding: 10,
     borderRadius: 50,
-    marginHorizontal: 20,
+    marginHorizontal: 7,
     marginTop: 20,
   },
   input: {
@@ -883,7 +914,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     bottom: 0,
-    left: 290,
+    left: 310,
   },
   OnlinePaymentView: {
     marginTop: 10,
@@ -895,6 +926,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: '#cdcdcd',
   },
+  radioButtonContainer: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderColor: 'blue',
+    borderWidth: 6,
+    backgroundColor: 'white',
+  },
   DotViewOnline: {
     backgroundColor: 'white',
     width: 15,
@@ -902,13 +943,5 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     borderWidth: 10,
     borderColor: '#58afff',
-  },
-  DotViewCash: {
-    backgroundColor: 'white',
-    width: 15,
-    height: 15,
-    borderRadius: 50,
-    borderWidth: 10,
-    borderColor: '#808080',
   },
 });

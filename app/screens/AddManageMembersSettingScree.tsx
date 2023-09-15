@@ -6,8 +6,10 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import {useSamyakAddMemberListPostMutation} from '../redux/service/AddMemberListService';
+import {useSamyakManageMembersListPostMutation} from '../redux/service/ManageMemberListService';
 
 const AddManageMembersSettingScreen = ({navigation}: any) => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -16,49 +18,39 @@ const AddManageMembersSettingScreen = ({navigation}: any) => {
   const [dob, setDOB] = useState('');
   const [sex, setSex] = useState('');
   const [patientRelation, setPatientRelation] = useState('');
-
-  console.log(
-    '****************',
-    phoneNumber,
-    title,
-    fullName,
-    dob,
-    sex,
-    patientRelation,
-  );
-
+  const [manageMembersAPIReq] = useSamyakManageMembersListPostMutation();
   const [addMemberAPIReq, addMemberAPIRes] =
     useSamyakAddMemberListPostMutation();
 
-  useEffect(() => {
-    const addMemberObj = {
-      userName: '7358722588',
-      password: 'Ram@12345678',
-    };
-    addMemberAPIReq(addMemberObj);
-  }, []);
-
   const handleSubmit = async () => {
-    let addMemberObj = {
-      UserName: title,
-      Pt_Name: fullName,
-      Dob: dob,
-      Gender_code: '',
-      Gender: sex,
-      Mobile_No: phoneNumber,
-      relationShip_code: '002',
-      Title_Code: '',
-      Link_Pt_Code: '',
-    };
-    console.log('addMemberAPI-----------', addMemberObj);
-    await addMemberAPIReq(addMemberObj);
+    if (fullName !== '') {
+      let addMemberObj = {
+        Dob: dob,
+        Gender: sex,
+        Link_Pt_Code: '',
+        Mobile_No: phoneNumber,
+        Pt_Name: fullName,
+        Relationship_Code: patientRelation,
+        Title_Code: title,
+        UserName: 7358722588,
+      };
+      await addMemberAPIReq(addMemberObj);
+    }
+  };
+  const showAlert = (title: string, message: string) => {
+    Alert.alert(title, message, [], {cancelable: false});
   };
 
   useEffect(() => {
     if (addMemberAPIRes.isSuccess) {
-      console.log('success');
-    } else {
-      console.log('error');
+      showAlert('Success', addMemberAPIRes?.data?.Message[0]?.Description);
+      const manageMembersObj = {
+        userName: '7358722588',
+      };
+      manageMembersAPIReq(manageMembersObj);
+      navigation.navigate('ManageMembers');
+    } else if(addMemberAPIRes.isError){
+      showAlert('Error', addMemberAPIRes?.error?.data?.Message[0]?.Message);
     }
   }, [addMemberAPIRes]);
 
@@ -243,3 +235,4 @@ const styles = StyleSheet.create({
     marginTop: 35,
   },
 });
+

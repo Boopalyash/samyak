@@ -32,9 +32,10 @@ const BookingScreen = ({navigation}: any) => {
   }, [userDetails, bookingAPIReq, dispatch]);
 
   const bookingData = useSelector(
-    (state: RootState) =>
-      state.samyak.samyakDetailsBookingListPost[0].Booking_Detail,
+    (state: RootState) => state.bookingList.samyakDetailsBookingListPost,
   );
+
+  console.log('bookingData=============', bookingData);
 
   const CardItem = ({item}: any) => {
     const formattedBookingDate = moment(item.Booking_Date, 'YYYY/MM/DD').format(
@@ -169,7 +170,7 @@ const BookingScreen = ({navigation}: any) => {
       </View>
       <View>
         <FlatList
-          data={bookingData}
+          data={bookingData[0]?.Booking_Detail}
           keyExtractor={item => item.Booking_No}
           renderItem={({item}) => <CardItem item={item} />}
         />
@@ -203,7 +204,7 @@ const styles = StyleSheet.create({
   image: {
     width: 30,
     height: 30,
-    marginLeft: 40,
+    marginLeft: 20,
   },
   CardContainer: {
     marginVertical: 10,
@@ -331,7 +332,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f2f2f2',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 30,
+    marginLeft: 20,
   },
   circleText: {
     color: 'black',
