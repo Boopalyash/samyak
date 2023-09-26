@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -11,10 +11,16 @@ import {
 import SegmentedControlTab from 'react-native-segmented-control-tab';
 import {Calendar} from 'react-native-calendars';
 import {RadioButton} from 'react-native-paper';
+import {useSamyakDefaultBranchPostMutation} from '../redux/service/DefaultBranchService';
+import {useFocusEffect} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useSamyakLabChooseBonePostMutation} from '../redux/service/LabChoosePackageBone';
+import {useSamyakBookTypePostMutation} from '../redux/service/BookTypeService';
+import {useSamyakSpecialPackagePostMutation} from '../redux/service/SpecialPackageService';
 
 const LabScreen = ({navigation}: any) => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState('');
   const [showChooseTestView, setShowChooseTestView] = useState(true);
   const [showPreferredOptionView, setShowPreferredOptionView] = useState(false);
   const [showChoosePatientView, setShowChoosePatientView] = useState(false);
@@ -23,6 +29,30 @@ const LabScreen = ({navigation}: any) => {
   const [selectedDate, setSelectedDate] = useState('');
   const [voucherCode, setVoucherCode] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('online');
+  const [selectedbranch, setSelectedBranch] = useState('RT-MAIN(PORUR)');
+  const [setSpecialPackage] = useState([]);
+  const [setBoneData] = useState([]);
+  const [bookTypeData, setBookTypeData] = useState([]);
+  const [isDataVisible, setIsDataVisible] = useState(false);
+  const [badgeCount, setBadgeCount] = useState(0);
+  const [isInCart, setIsInCart] = useState(false);
+  const padZero = num => (num < 10 ? `0${num}` : `${num}`);
+
+  console.log('showCalender', showCalendar);
+  // api for branch
+  const [defaultManageBranchAPIReq, defaultManageBranchAPIRes] =
+    useSamyakDefaultBranchPostMutation();
+
+  // api for  bone profile in stepper 1
+  const [boneAPIReq, boneAPIRes] = useSamyakLabChooseBonePostMutation();
+  console.log('boneAPIRes', boneAPIRes);
+
+  // api for bookType in stepper 2
+  const [booktypeAPIReq, booktypeAPIRes] = useSamyakBookTypePostMutation();
+
+  //api for special package in stepper 1
+  const [specialPackageAPIReq, specialPackageAPIRes] =
+    useSamyakSpecialPackagePostMutation();
 
   const handleNext = () => {
     if (currentStep < 4) {
@@ -72,21 +102,115 @@ const LabScreen = ({navigation}: any) => {
     navigation.navigate('Profile');
   };
 
+  const handleButtonPresssBack = () => {
+    navigation.navigate('Profile');
+  };
+
   const handleCalendarToggle = () => {
     setShowCalendar(!showCalendar);
   };
 
-  const handleDateSelect = ({date}: any) => {
-    const selectedDateObject = new Date(date.timestamp);
-    const day = selectedDateObject.getDate().toString().padStart(2, '0');
-    const month = (selectedDateObject.getMonth() + 1)
-      .toString()
-      .padStart(2, '0');
-    const year = selectedDateObject.getFullYear();
-    const formattedDate = `${day}-${month}-${year}`;
-    setSelectedDate(formattedDate);
-    setShowCalendar(true);
+  // to display the branch
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log('Component gained focus. Setting showCalendar to false');
+      AsyncStorage.getItem('selectedBranch')
+        .then(value => {
+          if (value) {
+            defaultManageBranchAPIReq({
+              userName: '7358722588',
+              Default_Firm_No: value,
+            });
+          }
+        })
+        .catch(error => console.error('Error ', error));
+      return () => {
+        console.log('Screen is unfocused');
+      };
+    }, []),
+  );
+
+  useEffect(() => {
+    if (defaultManageBranchAPIRes?.isSuccess) {
+      setSelectedBranch(
+        defaultManageBranchAPIRes?.data?.Message[0]?.Branch_Name,
+      );
+    }
+  }, [defaultManageBranchAPIRes]);
+
+  // useEffect for special package
+  useEffect(() => {
+    const specialPackageObj = {
+      userName: '7358722588',
+    };
+    specialPackageAPIReq(specialPackageObj)
+      .unwrap()
+      .then(response => {
+        if (response.SuccessFlag === 'true') {
+          setSpecialPackage(response.Message);
+        }
+      });
+  }, []);
+
+  // useEffect for bone profile
+  useEffect(() => {
+    const boneObj = {
+      userName: '7358722588',
+      Service_Code: 'P00360',
+    };
+    boneAPIReq(boneObj)
+      .unwrap()
+      .then(response => {
+        if (response.SuccessFlag === 'true') {
+          setBoneData(response.Message);
+        }
+      });
+  }, []);
+
+  // useEffect for book type
+  // useEffect(() => {
+  //   const bookTypeObj = {
+  //     userName: '7358722588',
+  //   };
+  //   booktypeAPIReq(bookTypeObj)
+  //     .unwrap()
+  //     .then(response => {
+  //       if (response.SuccessFlag === 'true') {
+  //         setBookTypeData(response.Message);
+  //       }
+  //     });
+  // }, []);
+  useEffect(() => {
+    if (booktypeAPIRes?.SuccessFlag === 'true') {
+      const types = booktypeAPIRes?.Message?.map(
+        booking => booking.Type_Of_Booking,
+      );
+      setBookTypeData(types);
+    }
+  }, []);
+
+  const handleArrowDownPress = () => {
+    setIsDataVisible(prevState => !prevState);
   };
+
+  const handleBook = () => {
+    if (isInCart) {
+      setBadgeCount(prevCount => Math.max(0, prevCount - 1));
+    } else {
+      setBadgeCount(prevCount => prevCount + 1);
+    }
+    setIsInCart(prev => !prev);
+  };
+
+  const getButtonText = () => {
+    return isInCart ? 'Remove from Cart' : 'Add to Cart';
+  };
+
+  // useEffect for segmentcontrol index
+  useEffect(() => {
+    setShowCalendar(false);
+    setSelectedIndex('');
+  }, [currentStep]);
 
   return (
     <ScrollView style={styles.MainContainer}>
@@ -118,7 +242,7 @@ const LabScreen = ({navigation}: any) => {
           source={require('../assets/images/location.png')}
           style={styles.LocationImg}
         />
-        <Text>RT-MAIN(PORUR)</Text>
+        <Text>{selectedbranch}</Text>
       </View>
 
       {/* stepper View */}
@@ -225,6 +349,11 @@ const LabScreen = ({navigation}: any) => {
               source={require('../assets/images/addCart.png')}
               style={styles.CartIcon}
             />
+            {badgeCount > 0 && (
+              <View style={styles.notificationBadge}>
+                <Text style={styles.notificationBadgeText}>{badgeCount}</Text>
+              </View>
+            )}
           </View>
 
           <View
@@ -247,27 +376,57 @@ const LabScreen = ({navigation}: any) => {
             <Text style={styles.PackageOfferText}>Choose Package</Text>
           </View>
 
-          <View style={styles.SquareCard}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                padding: 16,
-              }}>
-              <View>
-                <Text>BONE PROFILE (MINI)</Text>
-              </View>
-              <View>
+          <View>
+            <View style={styles.SquareCard}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  padding: 16,
+                }}>
+                <Text>
+                  {specialPackageAPIRes?.data?.Message[0]?.Service_Name}
+                </Text>
                 <Text style={{color: '#3478c1', left: 60}}>INR 1</Text>
-              </View>
-              <View>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={handleArrowDownPress}>
                   <Image
                     source={require('../assets/images/arrowDown.png')}
                     style={{tintColor: 'black', width: 15, height: 15}}
                   />
                 </TouchableOpacity>
               </View>
+              {isDataVisible && (
+                <View style={{left: 20}}>
+                  <TouchableOpacity onPress={handleBook}>
+                    <View
+                      style={{
+                        backgroundColor: 'blue',
+                        padding: 8,
+                        width: 200,
+                        borderRadius: 10,
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: 18,
+                          color: 'white',
+                          alignSelf: 'center',
+                        }}>
+                        {getButtonText()}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                  {boneAPIRes?.isSuccess &&
+                    boneAPIRes?.data?.Code === 200 &&
+                    boneAPIRes?.data?.Message &&
+                    boneAPIRes?.data?.Message[0]?.Service_Detail?.map(item => (
+                      <Text
+                        style={{marginTop: 10, fontSize: 14}}
+                        key={item.Test_Code}>
+                        {item.Test_Name}
+                      </Text>
+                    ))}
+                </View>
+              )}
             </View>
           </View>
 
@@ -300,68 +459,114 @@ const LabScreen = ({navigation}: any) => {
             <SegmentedControlTab
               values={['Home', 'Walk IN']}
               selectedIndex={selectedIndex}
-              onTabPress={index => setSelectedIndex(index)}
+              onTabPress={index => {
+                setSelectedIndex(index);
+                setShowCalendar(true);
+              }}
               tabsContainerStyle={styles.tabContainer}
               tabStyle={styles.tabStyle}
-              activeTabStyle={styles.activeTabStyle}
+              activeTabStyle={
+                (selectedIndex === 0 || selectedIndex === 1) &&
+                styles.activeTabStyle
+              }
               tabTextStyle={styles.tabTextStyle}
               activeTabTextStyle={styles.activeTabTextStyle}
             />
           </View>
 
-          <View style={{marginTop: 15, marginLeft: 15}}>
-            <Text style={{fontSize: 18, fontWeight: '300'}}>
-              Choose date and time
-            </Text>
-          </View>
+          <View>
+            <View style={{left: 20, marginTop: 10}}>
+              <Text>Test in Cart</Text>
+            </View>
 
-          <View style={styles.inputContainer1}>
-            {/* <TextInput style={styles.inputText1} value={selectedDate} /> */}
-            <TextInput
-              style={styles.inputText1}
-              value={selectedDate}
-              editable={false}
-            />
-            <TouchableOpacity onPress={handleCalendarToggle}>
-              <Image
-                source={require('../assets/images/calender.png')}
-                style={styles.CalenderIcon}
-              />
-            </TouchableOpacity>
+            <View style={styles.LipidView}>
+              <Text style={{color: '#676767'}}>BONE PROFILE(MINI)</Text>
+              <Text style={{color: '#696969'}}>INR 1.00</Text>
+            </View>
+
+            <View style={styles.AmoutPayableView}>
+              <Text style={{color: '#3a5ba1'}}>Sub Total</Text>
+              <Text style={{color: '#6c6c6c'}}>INR 1.00</Text>
+            </View>
+
+            <View
+              style={{
+                marginTop: 10,
+                width: '30%',
+                left: 25,
+              }}>
+              <TouchableOpacity
+                style={styles.buttons}
+                onPress={handleButtonPresssBack}>
+                <Image
+                  source={require('../assets/images/backArrowBlack.png')}
+                  style={styles.buttonImages}
+                />
+                <Text style={styles.buttonTexts}>Back</Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
           {showCalendar && (
-            <View style={styles.calendarContainer}>
-              <Calendar
-                onDayPress={handleDateSelect}
-                markedDates={{[selectedDate]: {selected: true}}}
-                theme={{
-                  selectedDayBackgroundColor: 'blue',
-                  selectedDayTextColor: 'white',
-                  todayTextColor: '#005dab',
-                  dotColor: 'blue',
-                }}
-              />
+            <View>
+              <View style={{marginTop: 15, marginLeft: 15}}>
+                <Text style={{fontSize: 18, fontWeight: '300'}}>
+                  Choose date and time
+                </Text>
+              </View>
+
+              <View style={styles.inputContainer1}>
+                <TextInput
+                  style={styles.inputText1}
+                  value={selectedDate}
+                  placeholder="Select Date"
+                  placeholderTextColor="#b9c5a0"
+                  editable={true}
+                  onChangeText={() => {}}
+                />
+                <TouchableOpacity onPress={handleCalendarToggle}>
+                  <Image
+                    source={require('../assets/images/calender.png')}
+                    style={styles.CalenderIcon}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              {showCalendar && (
+                <Calendar
+                  onDayPress={day => {
+                    const formattedDate = `${day.year}/${padZero(
+                      day.month,
+                    )}/${padZero(day.day)}`;
+                    setSelectedDate(formattedDate);
+                    setShowCalendar(false);
+                  }}
+                />
+              )}
+
+              <View style={styles.BackNextButtonView}>
+                <TouchableOpacity
+                  style={styles.backButton}
+                  onPress={handlePrev}>
+                  <Image
+                    source={require('../assets/images/backArrowBlack.png')}
+                    style={styles.buttonImagess}
+                  />
+                  <Text style={styles.buttonTexts}>Back</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.nextButton}
+                  onPress={handleNext}>
+                  <Text style={styles.buttonTexts}>Next</Text>
+                  <Image
+                    source={require('../assets/images/nextArrow.png')}
+                    style={styles.buttonImagesss}
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
           )}
-
-          <View style={styles.BackNextButtonView}>
-            <TouchableOpacity style={styles.backButton} onPress={handlePrev}>
-              <Image
-                source={require('../assets/images/backArrowBlack.png')}
-                style={styles.buttonImagess}
-              />
-              <Text style={styles.buttonTexts}>Back</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
-              <Text style={styles.buttonTexts}>Next</Text>
-              <Image
-                source={require('../assets/images/nextArrow.png')}
-                style={styles.buttonImagesss}
-              />
-            </TouchableOpacity>
-          </View>
         </View>
       )}
 
@@ -683,7 +888,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: 'black',
-    padding: 5,
   },
   CartIcon: {
     width: 25,
@@ -723,7 +927,6 @@ const styles = StyleSheet.create({
   },
   SquareCard: {
     width: '90%',
-    height: 50,
     borderWidth: 1,
     backgroundColor: '#ffffff',
     alignSelf: 'center',
@@ -943,5 +1146,34 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     borderWidth: 10,
     borderColor: '#58afff',
+  },
+  notificationBadge: {
+    position: 'absolute',
+    top: 3,
+    right: 20,
+    width: 20,
+    height: 20,
+  },
+
+  notificationBadgeText: {
+    color: 'black',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  LipidView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#f7f7f7',
+    padding: 15,
+    margin: 20,
+  },
+  AmoutPayableView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#f2f2f2',
+    margin: 20,
+    paddingVertical: 20,
+    padding: 15,
+    marginTop: -25,
   },
 });

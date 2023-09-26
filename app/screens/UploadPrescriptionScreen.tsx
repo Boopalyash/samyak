@@ -16,9 +16,9 @@ const UploadPrescriptionScreen = ({navigation}: any) => {
   };
 
   return (
-    <View style={{marginTop: 50}}>
-      <View style={{flexDirection: 'row'}}>
-        <Text>Upload Prescription</Text>
+    <View>
+      <View style={styles.AddMemberView}>
+        <Text style={styles.headerText}>Upload Description</Text>
         <TouchableOpacity onPress={handleCross}>
           <Image source={require('../assets/images/black_cross.png')} />
         </TouchableOpacity>
@@ -27,4 +27,15 @@ const UploadPrescriptionScreen = ({navigation}: any) => {
   );
 };
 export default UploadPrescriptionScreen;
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  AddMemberView: {
+    flexDirection: 'row',
+    marginTop: 60,
+    marginBottom: 30,
+    justifyContent: 'space-between',
+    paddingHorizontal: 30,
+  },
+  headerText: {
+    fontSize: 20,
+  },
+});

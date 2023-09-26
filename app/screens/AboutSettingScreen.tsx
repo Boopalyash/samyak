@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -10,12 +10,17 @@ import {
 import {useSelector} from 'react-redux';
 import {RootState} from '../redux/Store';
 import HTMLRender from 'react-native-render-html';
+import {useSamyakDefaultBranchPostMutation} from '../redux/service/DefaultBranchService';
+import {useFocusEffect} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AboutSettingScreen = ({navigation}: any) => {
+  const [selectedbranch, setSelectedBranch] = useState('RT-MAIN(PORUR)');
+  const [defaultManageBranchAPIReq, defaultManageBranchAPIRes] =
+    useSamyakDefaultBranchPostMutation();
   const aboutUsData = useSelector(
     (state: RootState) => state.aboutUs.samyakDetailsAboutUsPost,
   );
-  console.log('aboutData===============', aboutUsData);
 
   const handleProfile = () => {
     navigation.navigate('Profile');
@@ -24,6 +29,33 @@ const AboutSettingScreen = ({navigation}: any) => {
   const handleButtonPresss = () => {
     navigation.navigate('Settings');
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      AsyncStorage.getItem('selectedBranch')
+        .then(value => {
+          if (value) {
+            defaultManageBranchAPIReq({
+              userName: '7358722588',
+              Default_Firm_No: value,
+            });
+          }
+        })
+        .catch(error => console.error('Error ', error));
+      return () => {
+        console.log('Screen is unfocused');
+      };
+    }, []),
+  );
+
+  useEffect(() => {
+    if (defaultManageBranchAPIRes?.isSuccess) {
+      setSelectedBranch(
+        defaultManageBranchAPIRes?.data?.Message[0]?.Branch_Name,
+      );
+    }
+  }, [defaultManageBranchAPIRes]);
+
   return (
     <View style={styles.MainContainer}>
       <View style={styles.container}>
@@ -53,7 +85,7 @@ const AboutSettingScreen = ({navigation}: any) => {
             source={require('../assets/images/location.png')}
             style={styles.LocationImg}
           />
-          <Text>RT-MAIN(PORUR)</Text>
+          <Text>{selectedbranch}</Text>
         </View>
       </View>
 

@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Image,
   FlatList,
+  Alert,
   TouchableOpacity,
 } from 'react-native';
 import {useRoute} from '@react-navigation/native';
@@ -35,7 +36,16 @@ const BookingScreen = ({navigation}: any) => {
     (state: RootState) => state.bookingList.samyakDetailsBookingListPost,
   );
 
-  console.log('bookingData=============', bookingData);
+  // display when there is no data
+  // useEffect(() => {
+  //   if (
+  //     !bookingData ||
+  //     !bookingData[0]?.Booking_Detail ||
+  //     bookingData[0]?.Booking_Detail.length === 0
+  //   ) {
+  //     Alert.alert('No Data Found', 'There is no booking data to display.');
+  //   }
+  // }, [bookingData]);
 
   const CardItem = ({item}: any) => {
     const formattedBookingDate = moment(item.Booking_Date, 'YYYY/MM/DD').format(
@@ -173,6 +183,13 @@ const BookingScreen = ({navigation}: any) => {
           data={bookingData[0]?.Booking_Detail}
           keyExtractor={item => item.Booking_No}
           renderItem={({item}) => <CardItem item={item} />}
+          ListEmptyComponent={() => {
+            return (
+              <View style={{alignSelf:'center'}}> 
+                <Text>No Data Found</Text>
+              </View>
+            );
+          }}
         />
       </View>
     </View>

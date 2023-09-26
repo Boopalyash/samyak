@@ -53,6 +53,7 @@ const EditMembersScreen = ({navigation}: any) => {
   const [relatioshipAPIReq, relatioshipAPIRes] =
     useSamyakRelationshipPostMutation();
   const [manageMembersAPIReq] = useSamyakManageMembersListPostMutation();
+
   // api for title
   const [titleAPIReq, titleAPIRes] = useSamyakTitlePostMutation();
   const [editMemberAPIReq, editMemberAPIRes] =
@@ -60,7 +61,7 @@ const EditMembersScreen = ({navigation}: any) => {
   const showAlert = (title: string, message: string) => {
     Alert.alert(title, message, [], {cancelable: false});
   };
-  console.log(editMemberAPIRes, 'editMemberAPIRes');
+
   useEffect(() => {
     if (editMemberAPIRes.isSuccess) {
       showAlert('Success', 'Patient Details Updated Successfully');
@@ -73,6 +74,7 @@ const EditMembersScreen = ({navigation}: any) => {
       showAlert('Error', editMemberAPIRes?.error?.data?.Message[0]?.Message);
     }
   }, [editMemberAPIRes]);
+
   // useEffect for  gender api
   useEffect(() => {
     const genderObj = {
@@ -131,11 +133,6 @@ const EditMembersScreen = ({navigation}: any) => {
     navigation.navigate('ManageMembers');
   };
 
-  const handleDateSelect = date => {
-    setSelectedDate(date.dateString);
-    setShowCalendar(false);
-  };
-
   const handleUpdate = async () => {
     let addMemberObj = {
       Dob: selectedDate,
@@ -160,9 +157,9 @@ const EditMembersScreen = ({navigation}: any) => {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.inputContainer}>
+      <View style={[styles.inputDrop, styles.dropdownContainer]}>
         <TextInput
-          style={styles.input}
+          style={[styles.borderRadius]}
           placeholder="Phone Number"
           onChangeText={setPhoneNumber}
           value={phoneNumber}
@@ -175,11 +172,11 @@ const EditMembersScreen = ({navigation}: any) => {
         </TouchableOpacity>
       </View>
 
-      <View style={[styles.dropdownContainer]}>
+      <View style={[styles.inputDrop, styles.dropdownContainer]}>
         <TouchableOpacity
           style={styles.touchableContainer}
           onPress={handleTitleArrow}>
-          <Text style={styles.input}>{title || 'Title'}</Text>
+          <Text style={[styles.borderRadius]}>{title || 'Title'}</Text>
           <Image
             source={require('../assets/images/downArrow.png')}
             style={styles.downArrow}
@@ -205,20 +202,21 @@ const EditMembersScreen = ({navigation}: any) => {
           </View>
         )}
       </View>
-      <View style={styles.inputContainer}>
+
+      <View style={[styles.inputDrop, styles.dropdownContainer]}>
         <TextInput
-          style={styles.input}
+          style={[styles.borderRadius]}
           placeholder="Name"
           onChangeText={setFullName}
           value={fullName}
         />
       </View>
 
-      <View style={styles.inputContainerDob}>
+      <View style={[styles.inputDrop, styles.dropdownContainer]}>
         <TouchableOpacity
           style={styles.touchableContainer}
           onPress={() => setShowCalendar(true)}>
-          <Text style={[styles.input, styles.borderRadius]}>
+          <Text style={[styles.borderRadius]}>
             {selectedDate || 'Select DOB'}
           </Text>
           <Image
@@ -226,16 +224,22 @@ const EditMembersScreen = ({navigation}: any) => {
             style={styles.CalenderImg}
           />
         </TouchableOpacity>
-        {showCalendar && <Calendar onDayPress={handleDateSelect} />}
+        {showCalendar && (
+          <Calendar
+            onDayPress={day => {
+              const formattedDate = `${day.year}/${day.month}/${day.day}`;
+              setSelectedDate(formattedDate);
+              setShowCalendar(false);
+            }}
+          />
+        )}
       </View>
 
-      <View style={styles.dropdownContainer}>
+      <View style={[styles.inputDrop, styles.dropdownContainer]}>
         <TouchableOpacity
           style={styles.touchableContainer}
           onPress={handleGenderArrow}>
-          <Text style={[styles.input, styles.borderRadius]}>
-            {sex || 'Sex'}
-          </Text>
+          <Text style={[styles.borderRadius]}>{sex || 'Sex'}</Text>
           <Image
             source={require('../assets/images/downArrow.png')}
             style={styles.downArrow}
@@ -260,11 +264,12 @@ const EditMembersScreen = ({navigation}: any) => {
           </View>
         )}
       </View>
-      <View style={styles.dropdownContainer}>
+
+      <View style={[styles.inputDrop, styles.dropdownContainer]}>
         <TouchableOpacity
           style={styles.touchableContainer}
           onPress={handleRelationshipArrow}>
-          <Text style={[styles.input, styles.borderRadius]}>
+          <Text style={[styles.borderRadius]}>
             {patientRelation || 'Patient Relation'}
           </Text>
           <Image
@@ -325,15 +330,14 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: 'white',
     margin: 15,
-    borderRadius: 50,
+    borderRadius: 90,
   },
-  inputDropdown: {
-    borderRadius: 50,
+  inputDrop: {
+    padding: 20,
     backgroundColor: 'white',
-    height: '8%',
-    width: '85%',
+    margin: 15,
+    borderRadius: 50,
   },
-
   dropdownContainer: {
     width: '90%',
     alignSelf: 'center',
@@ -342,7 +346,7 @@ const styles = StyleSheet.create({
     width: 15,
     height: 15,
     position: 'absolute',
-    right: 30,
+    right: 20,
     alignSelf: 'center',
     tintColor: '#9e9e9e',
   },
@@ -369,8 +373,11 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderRadius: 5,
     alignSelf: 'center',
-    width: '90%',
+    width: '100%',
+    position: 'absolute',
+    zIndex: 2,
   },
+
   dropdownItem: {
     padding: 10,
     fontSize: 16,
@@ -390,14 +397,14 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     position: 'absolute',
-    right: 30,
+    right: 20,
     tintColor: 'black',
   },
   CalenderImg: {
     width: 20,
     height: 20,
     position: 'absolute',
-    right: 30,
+    right: 20,
     tintColor: 'red',
   },
   borderRadius: {

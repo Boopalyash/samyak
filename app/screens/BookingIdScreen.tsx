@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -9,8 +9,14 @@ import {
 } from 'react-native';
 import {useRoute} from '@react-navigation/native';
 import moment from 'moment';
+import {useSamyakDefaultBranchPostMutation} from '../redux/service/DefaultBranchService';
+import {useFocusEffect} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const BookingIdScreen = ({navigation}: any) => {
+  const [selectedbranch, setSelectedBranch] = useState('RT-MAIN(PORUR)');
+  const [defaultManageBranchAPIReq, defaultManageBranchAPIRes] =
+    useSamyakDefaultBranchPostMutation();
   const route = useRoute();
   const userDetails = route.params;
 
@@ -29,6 +35,32 @@ const BookingIdScreen = ({navigation}: any) => {
     userDetails?.userDetails?.Booking_Time,
     'h:mmA',
   ).format('hh:mm A');
+
+  useFocusEffect(
+    React.useCallback(() => {
+      AsyncStorage.getItem('selectedBranch')
+        .then(value => {
+          if (value) {
+            defaultManageBranchAPIReq({
+              userName: '7358722588',
+              Default_Firm_No: value,
+            });
+          }
+        })
+        .catch(error => console.error('Error ', error));
+      return () => {
+        console.log('Screen is unfocused');
+      };
+    }, []),
+  );
+
+  useEffect(() => {
+    if (defaultManageBranchAPIRes?.isSuccess) {
+      setSelectedBranch(
+        defaultManageBranchAPIRes?.data?.Message[0]?.Branch_Name,
+      );
+    }
+  }, [defaultManageBranchAPIRes]);
 
   return (
     <View style={styles.MainContainer}>
@@ -60,7 +92,7 @@ const BookingIdScreen = ({navigation}: any) => {
           source={require('../assets/images/location.png')}
           style={styles.LocationImg}
         />
-        <Text>{userDetails?.userDetails?.Branch_Name}</Text>
+        <Text>{selectedbranch}</Text>
       </View>
 
       <View style={{left: 20}}>
@@ -289,6 +321,7 @@ const styles = StyleSheet.create({
     height: 50,
     marginTop: 30,
     borderRadius: 10,
+    left: 10,
   },
   buttons: {
     flexDirection: 'row',

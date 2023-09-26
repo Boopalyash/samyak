@@ -1,13 +1,19 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '../redux/Store';
+import {useSamyakDefaultBranchPostMutation} from '../redux/service/DefaultBranchService';
+import {useFocusEffect} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ContactUsSettingScreen = ({navigation}: any) => {
+  const [selectedbranch, setSelectedBranch] = useState('RT-MAIN(PORUR)');
+  const [defaultManageBranchAPIReq, defaultManageBranchAPIRes] =
+    useSamyakDefaultBranchPostMutation();
+
   const contactUsData = useSelector(
     (state: RootState) => state.contactUs.samyakContactUsDetailsPost,
   );
-  console.log('contactData&&&&&&&&&&&', contactUsData);
 
   const handleProfile = () => {
     navigation.navigate('Settings');
@@ -21,6 +27,32 @@ const ContactUsSettingScreen = ({navigation}: any) => {
     navigation.navigate('SosAlert');
   };
 
+  useFocusEffect(
+    React.useCallback(() => {
+      AsyncStorage.getItem('selectedBranch')
+        .then(value => {
+          if (value) {
+            defaultManageBranchAPIReq({
+              userName: '7358722588',
+              Default_Firm_No: value,
+            });
+          }
+        })
+        .catch(error => console.error('Error ', error));
+      return () => {
+        console.log('Screen is unfocused');
+      };
+    }, []),
+  );
+
+  useEffect(() => {
+    if (defaultManageBranchAPIRes?.isSuccess) {
+      setSelectedBranch(
+        defaultManageBranchAPIRes?.data?.Message[0]?.Branch_Name,
+      );
+    }
+  }, [defaultManageBranchAPIRes]);
+
   return (
     <View style={styles.MainContainer}>
       <View style={styles.container}>
@@ -28,10 +60,10 @@ const ContactUsSettingScreen = ({navigation}: any) => {
           <Text style={styles.BookingText}>Contact Us</Text>
           <View style={styles.imageRow}>
             <TouchableOpacity onPress={handleSosAlert}>
-            <Image
-              source={require('../assets/images/alarm.png')}
-              style={styles.image}
-            />
+              <Image
+                source={require('../assets/images/alarm.png')}
+                style={styles.image}
+              />
             </TouchableOpacity>
             <Image
               source={require('../assets/images/bellwhite.png')}
@@ -51,7 +83,7 @@ const ContactUsSettingScreen = ({navigation}: any) => {
           source={require('../assets/images/location.png')}
           style={styles.LocationImg}
         />
-        <Text>RT-MAIN(PORUR)</Text>
+        <Text>{selectedbranch}</Text>
       </View>
 
       <View style={styles.CenterView}>
@@ -116,7 +148,7 @@ const styles = StyleSheet.create({
   image: {
     width: 30,
     height: 30,
-    marginLeft: 40,
+    marginLeft: 30,
   },
   circle: {
     width: 30,
@@ -125,7 +157,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f2f2f2',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 30,
+    marginLeft: 20,
   },
   circleText: {
     color: 'black',

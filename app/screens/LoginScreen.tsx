@@ -13,6 +13,7 @@ import {
 // components and utilities
 import {useSamyakLoginPostMutation} from '../redux/service/OauthService';
 import {useSamyakBookingListPostMutation} from '../redux/service/BookingListPostService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = ({navigation}: any) => {
   // state value
@@ -66,6 +67,7 @@ const LoginScreen = ({navigation}: any) => {
       loginAPIReq(loginReqObj);
       bookingAPIReq(loginReqObj);
     }
+    AsyncStorage.clear();
   };
 
   const togglePasswordVisibility = () => {

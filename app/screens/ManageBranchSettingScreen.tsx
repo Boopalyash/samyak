@@ -12,15 +12,19 @@ import {
 import {Card} from 'react-native-paper';
 import HeaderCommonComponentScreen from '../components/HeaderCommonComponent';
 import {useSamyakManageBranchPostMutation} from '../redux/service/ManageBranchPostService';
+import {useSamyakDefaultBranchPostMutation} from '../redux/service/DefaultBranchService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ManageBranchSettingScreen = ({navigation}: any) => {
   const [showOptions, setShowOptions] = useState(false);
-  const [selectedOptionIndex, setSelectedOptionIndex] = useState(-1);
+  const [selectedOptionIndex, setSelectedOptionIndex] =
+    useState('Select Branch');
   const [branchData, setBranchData] = useState([]);
-
   const cardRef = useRef(null);
 
   const [manageBranchAPIReq] = useSamyakManageBranchPostMutation();
+  const [defaultManageBranchAPIReq, defaultManageBranchAPIRes] =
+    useSamyakDefaultBranchPostMutation();
 
   useEffect(() => {
     const manageBranchObj = {
@@ -36,6 +40,11 @@ const ManageBranchSettingScreen = ({navigation}: any) => {
       });
   }, []);
 
+  useEffect(() => {
+    if (defaultManageBranchAPIRes?.isSuccess) {
+    }
+  }, [defaultManageBranchAPIRes]);
+  
   const openDropdown = () => {
     setShowOptions(true);
   };
@@ -44,9 +53,19 @@ const ManageBranchSettingScreen = ({navigation}: any) => {
     setShowOptions(false);
   };
 
-  const handleOptionSelect = (option: string, index: number) => {
-    setSelectedOptionIndex(index);
+  const handleOptionSelect = (
+    option: string,
+    number: string,
+    index: number,
+  ) => {
+    setSelectedOptionIndex(option);
     closeDropdown();
+    const defaultBranchobj = {
+      userName: '7358722588',
+      Default_Firm_No: number,
+    };
+    defaultManageBranchAPIReq(defaultBranchobj);
+    AsyncStorage.setItem('selectedBranch', number);
   };
 
   const handleArrowImagePress = () => {
@@ -74,11 +93,7 @@ const ManageBranchSettingScreen = ({navigation}: any) => {
         <TouchableOpacity
           style={styles.inputWrapper}
           onPress={handleArrowImagePress}>
-          <Text style={styles.inputText}>
-            {selectedOptionIndex !== -1
-              ? branchData[selectedOptionIndex].Branch_Name
-              : 'Select Branch'}
-          </Text>
+          <Text style={styles.inputText}>{selectedOptionIndex}</Text>
           <Image
             source={require('../assets/images/downArrow.png')}
             style={styles.arrowImage}
@@ -94,12 +109,14 @@ const ManageBranchSettingScreen = ({navigation}: any) => {
                 data={branchData}
                 renderItem={({item, index}) => (
                   <TouchableOpacity
-                    onPress={() => handleOptionSelect(item.Branch_Name, index)}
+                    onPress={() =>
+                      handleOptionSelect(item.Branch_Name, item.Firm_No, index)
+                    }
                     style={[
                       styles.option,
                       selectedOptionIndex === index && styles.selectedOption,
                     ]}>
-                    <Text>{item.Branch_Name}</Text>
+                    <Text style={{color: 'orange'}}>{item.Branch_Name}</Text>
                   </TouchableOpacity>
                 )}
               />
@@ -201,6 +218,7 @@ const styles = StyleSheet.create({
   },
   card: {
     maxHeight: 280,
+    backgroundColor: 'white',
   },
 });
 

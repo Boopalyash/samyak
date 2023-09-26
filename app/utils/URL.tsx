@@ -25,6 +25,7 @@ export const CONTACT_US = 'Contact_Us';
 
 // Setting branch api
 export const GET_BRANCH_DETAIL = 'Get_Branch_Detail';
+export const USER_VS_DEFAULT_BRANCH = 'User_Vs_Default_Branch';
 
 // Patient Details api
 export const GET_PATIENT = 'Get_Patient_List';
@@ -43,3 +44,22 @@ export const GET_RELATIONSHIP = 'Get_RelationShip';
 
 // Lab Test api
 export const GET_PACKAGE_TEST_LIST = 'TestInfo_In_A_Service';
+export const LAB_TEST_PACKAGE = 'Test_Package';
+
+// Notification api
+export const NOTIFICATION_COUNT = 'User_Notify_In_Count';
+export const NOTIFICATION_LIST = 'User_Notify_In_List';
+
+// Profile api
+export const USER_INFO = 'User_View';
+export const UPDATE_PROFILE = 'User_Profile_Update';
+
+// Booking Types stepper 2
+export const GET_BOOKING_TYPES = 'Get_Booking_Types';
+export const GET_BOOKING_SLOT_DAYWISE = 'Get_Booking_Slot_DayWise';
+
+// Lab Test Bone stepper 1
+export const SPECIAL_PACKAGE = 'Special_Package';
+
+// Bottom navigation text
+export const CONFIG = 'App_Settings';

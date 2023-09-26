@@ -12,15 +12,22 @@ import HeaderCommonComponentScreen from '../components/HeaderCommonComponent';
 import {useSamyakAddressPostMutation} from '../redux/service/ManageAddressPostService';
 import {useSamyakDeleteAddressPostMutation} from '../redux/service/DeleteAddressService';
 import {useSelector} from 'react-redux';
+import {useSamyakDefaultBranchPostMutation} from '../redux/service/DefaultBranchService';
+import {useFocusEffect} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ManageAddressSettingsScreen = ({navigation}: any) => {
   const [getAddressAPIReq, getAddressAPIRes] = useSamyakAddressPostMutation();
   const [deleteAddressAPIReq, deleteAddressAPIRes] =
     useSamyakDeleteAddressPostMutation();
   const [addresData, setAddressData] = useState([]);
+  const [selectedbranch, setSelectedBranch] = useState('RT-MAIN(PORUR)');
+  const [defaultManageBranchAPIReq, defaultManageBranchAPIRes] =
+    useSamyakDefaultBranchPostMutation();
+
   const addressSelector = useSelector(
     (state: RootState) =>
-      state.getAddressPost.samyakAddressDetailsPost[0].User_Address,
+      state.getAddressPost.samyakAddressDetailsPost[0]?.User_Address,
   );
   console.log(addressSelector, 'addressData');
   const showAddressObj = {
@@ -30,7 +37,7 @@ const ManageAddressSettingsScreen = ({navigation}: any) => {
 
   useEffect(() => {
     if (deleteAddressAPIRes?.isSuccess) {
-      showAlert('Success', deleteAddressAPIRes?.data?.Message[0]?.Message);
+      showAlert('Success', deleteAddressAPIRes?.data?.Status_Description);
       getAddressAPIReq(showAddressObj);
     } else if (deleteAddressAPIRes?.isError) {
       showAlert('Error', deleteAddressAPIRes?.error?.data?.Message[0]?.Message);
@@ -63,13 +70,39 @@ const ManageAddressSettingsScreen = ({navigation}: any) => {
     navigation.navigate('AddAddress');
   };
 
-  const handleEdit = (item) => {
-    navigation.navigate('EditAddress',{item});
+  const handleEdit = item => {
+    navigation.navigate('EditAddress', {item});
   };
 
   const handleButtonPresss = () => {
     navigation.navigate('Settings');
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      AsyncStorage.getItem('selectedBranch')
+        .then(value => {
+          if (value) {
+            defaultManageBranchAPIReq({
+              userName: '7358722588',
+              Default_Firm_No: value,
+            });
+          }
+        })
+        .catch(error => console.error('Error ', error));
+      return () => {
+        console.log('Screen is unfocused');
+      };
+    }, []),
+  );
+
+  useEffect(() => {
+    if (defaultManageBranchAPIRes?.isSuccess) {
+      setSelectedBranch(
+        defaultManageBranchAPIRes?.data?.Message[0]?.Branch_Name,
+      );
+    }
+  }, [defaultManageBranchAPIRes]);
 
   const renderAddressItem = ({item}: any) => {
     return (
@@ -113,7 +146,7 @@ const ManageAddressSettingsScreen = ({navigation}: any) => {
           source={require('../assets/images/location.png')}
           style={styles.LocationImg}
         />
-        <Text>RT-MAIN(PORUR)</Text>
+        <Text>{selectedbranch}</Text>
       </View>
 
       <View style={{alignSelf: 'flex-end', paddingHorizontal: 20}}>

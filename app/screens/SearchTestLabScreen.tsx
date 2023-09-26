@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -8,8 +8,35 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
+import {useSamyakLabSearchTestPostMutation} from '../redux/service/LabSearchTestService';
 
 const SearchTestLabScreen = ({navigation}: any) => {
+  const [searchTestAPIReq, searchTestAPIRes] =
+    useSamyakLabSearchTestPostMutation();
+  console.log('searchTestAPIRes', searchTestAPIRes);
+
+  useEffect(() => {
+    const searchTestObj = {
+      userName: '7358722588',
+      Firm_No: '',
+      Service_Type: 'T',
+      Search_Text: 'test',
+      Start_Index: 0,
+      Page_Count: 10,
+      Organ_Code: '',
+      Dept_Code: '',
+    };
+    searchTestAPIReq(searchTestObj);
+  }, []);
+
+  useEffect(() => {
+    if (searchTestAPIRes?.isSuccess) {
+      console.log('Success', searchTestAPIRes?.data?.Message[0]?.Message);
+    } else if (searchTestAPIRes?.isError) {
+      console.log('Error', searchTestAPIRes?.error?.data?.Message[0]?.Message);
+    }
+  }, [searchTestAPIRes]);
+
   const handleCross = () => {
     navigation.navigate('Lab');
   };

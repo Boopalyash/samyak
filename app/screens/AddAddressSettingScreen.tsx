@@ -34,7 +34,8 @@ const AddAddressSettingScreen = ({navigation}: any) => {
   const showAlert = (title: string, message: string) => {
     Alert.alert(title, message, [], {cancelable: false});
   };
-  const handleAddressTypeSelect = (type: string) => {
+
+  const handleAddressTypeSelect = type => {
     setSelectedAddressType(type.id);
     setAddress(type.name);
     setIsDropdownVisible(false);

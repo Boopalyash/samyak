@@ -5,7 +5,7 @@ const HealthTipsDetailScreen = ({route, navigation}: any) => {
   const {healthTipData} = route.params;
 
   const handleCross = () => {
-    navigation.navigate('DashBoard');
+    navigation.navigate('Dashboard');
   };
 
   return (

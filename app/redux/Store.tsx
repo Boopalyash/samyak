@@ -36,6 +36,16 @@ import editGender from './slice/EditGenderSlice';
 import relationship from './slice/RelationshipSlice';
 import title from './slice/TitleSlice';
 import chooseBoneProfile from './slice/LabChooseBoneSlice';
+import defaultBranch from './slice/DefaultBranchSlice';
+import notificationCount from './slice/NotificationCountSlice';
+import notificationList from './slice/NotificationListSlice';
+import profile from './slice/ProfileSlice';
+import profileUpdate from './slice/ProfileUpdateSlice';
+import labSearchTest from './slice/LabSearchTestSlice';
+import bookType from './slice/BookTypeSlice';
+import bookDayWise from './slice/BookDayWiseSlice';
+import specialPackage from './slice/SpecialPackageSlice';
+import appSettings from './slice/AppSettingsSlice';
 
 const reducers = combineReducers({
   [api.reducerPath]: api.reducer,
@@ -61,6 +71,16 @@ const reducers = combineReducers({
   relationship,
   title,
   chooseBoneProfile,
+  defaultBranch,
+  notificationCount,
+  notificationList,
+  profile,
+  profileUpdate,
+  labSearchTest,
+  bookType,
+  bookDayWise,
+  specialPackage,
+  appSettings,
 });
 
 const persistConfig = {

@@ -16,7 +16,6 @@ import {useSamyakAddressPostMutation} from '../redux/service/ManageAddressPostSe
 const EditAddressScreen = ({navigation}: any) => {
   const route = useRoute();
   const editData = route.params;
-  console.log(editData, 'datardfgdfk');
 
   const [address, setAddress] = useState(editData?.item?.Address_Type_Desc);
   const [street, setStreet] = useState(editData?.item?.Street);
@@ -48,7 +47,6 @@ const EditAddressScreen = ({navigation}: any) => {
       Username: '7358722588',
       Landmark: landmark,
     };
-    console.log('updateAddressAPI)))))))))', updateAddressObj);
     await updateAddressAPIReq(updateAddressObj);
   };
 
@@ -103,12 +101,12 @@ const EditAddressScreen = ({navigation}: any) => {
           onChangeText={setAddress}
           value={address}
         />
-        <TouchableOpacity style={styles.touchableContainer}>
+        {/* <TouchableOpacity style={styles.touchableContainer}>
           <Image
             source={require('../assets/images/downArrow.png')}
             style={styles.downArrow}
           />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       <View style={styles.inputContainer}>
@@ -259,5 +257,32 @@ const styles = StyleSheet.create({
     color: 'white',
     alignSelf: 'center',
     fontSize: 20,
+  },
+  dropdownButton: {
+    width: '90%',
+    alignSelf: 'center',
+    borderRadius: 50,
+    padding: 20,
+    backgroundColor: 'white',
+    margin: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  dropdownButtonText: {
+    fontSize: 16,
+  },
+  dropdown: {
+    marginTop: 5,
+    width: '90%',
+    alignSelf: 'center',
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+  },
+  dropdownItem: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
   },
 });

@@ -1,6 +1,5 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import SearcTestLabScreen from '../screens/SearchTestLabScreen';
 import LabScreen from '../screens/LabScreen';
 
 const stack = createStackNavigator();

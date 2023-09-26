@@ -12,16 +12,41 @@ import {useSamyakPromotionPostMutation} from '../redux/service/DashBoardPromotio
 import {useSamyakHealthPostMutation} from '../redux/service/DashBoardHealthTipsPostService';
 import {useSelector} from 'react-redux';
 import {RootState} from '../redux/Store';
+import {useFocusEffect} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useSamyakDefaultBranchPostMutation} from '../redux/service/DefaultBranchService';
+import {useSamyakLabChooseBonePostMutation} from '../redux/service/LabChoosePackageBone';
+import {useSamyakSpecialPackagePostMutation} from '../redux/service/SpecialPackageService';
 
 const DashBoardScreen = ({navigation}: any) => {
   const [showPackageOffer, setShowPackageOffer] = useState(false);
   const [showHealthTips, setShowHealthTips] = useState(false);
   const [showPromotion, setShowPromotion] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const [selectedbranch, setSelectedBranch] = useState('RT-MAIN(PORUR)');
+  const [setBoneData] = useState([]);
+  const [setSpecialPackage] = useState([]);
+  const [isDataVisible, setIsDataVisible] = useState(false);
 
+  // to display the branch
+  const [defaultManageBranchAPIReq, defaultManageBranchAPIRes] =
+    useSamyakDefaultBranchPostMutation();
+
+  // to display promotion
   const [promotionAPIReq] = useSamyakPromotionPostMutation();
+
+  // to display health
   const [healthAPIReq] = useSamyakHealthPostMutation();
 
+  // to display bone profile
+  const [boneAPIReq, boneAPIRes] = useSamyakLabChooseBonePostMutation();
+  console.log('boneAPIRes', boneAPIRes);
+
+  //api for special package
+  const [specialPackageAPIReq, specialPackageAPIRes] =
+    useSamyakSpecialPackagePostMutation();
+
+  // useEffect for promotion
   useEffect(() => {
     const promotionObj = {
       userName: '7358722588',
@@ -33,8 +58,8 @@ const DashBoardScreen = ({navigation}: any) => {
   const promotionData = useSelector(
     (state: RootState) => state.promotion.samyakPromotionDetailsPost,
   );
-  console.log('promotionData===============', promotionData);
 
+  // useEffect for health
   useEffect(() => {
     const healthObj = {
       userName: '7358722588',
@@ -53,6 +78,72 @@ const DashBoardScreen = ({navigation}: any) => {
 
   const toggleDescription = () => {
     setShowFullDescription(!showFullDescription);
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      AsyncStorage.getItem('selectedBranch')
+        .then(value => {
+          if (value) {
+            defaultManageBranchAPIReq({
+              userName: '7358722588',
+              Default_Firm_No: value,
+            });
+          }
+        })
+        .catch(error => console.error('Error ', error));
+      return () => {
+        console.log('Screen is unfocused');
+      };
+    }, []),
+  );
+
+  useEffect(() => {
+    if (defaultManageBranchAPIRes?.isSuccess) {
+      setSelectedBranch(
+        defaultManageBranchAPIRes?.data?.Message[0]?.Branch_Name,
+      );
+    }
+  }, [defaultManageBranchAPIRes]);
+
+  // useEffect for special package
+  useEffect(() => {
+    const specialPackageObj = {
+      userName: '7358722588',
+    };
+    specialPackageAPIReq(specialPackageObj)
+      .unwrap()
+      .then(response => {
+        if (response.SuccessFlag === 'true') {
+          setSpecialPackage(response.Message);
+        }
+      });
+  }, []);
+
+  // useEffect for bone profile
+  useEffect(() => {
+    const boneObj = {
+      userName: '7358722588',
+      Service_Code: 'P00360',
+    };
+    boneAPIReq(boneObj)
+      .unwrap()
+      .then(response => {
+        if (response.SuccessFlag === 'true') {
+          setBoneData(response.Message);
+        }
+      });
+  }, []);
+
+  // default show the package offer screen
+  useEffect(() => {
+    setShowPackageOffer(true);
+    setShowPromotion(false);
+    setShowHealthTips(false);
+  }, []);
+
+  const handleArrowDownPress = () => {
+    setIsDataVisible(prevState => !prevState);
   };
 
   const data = [
@@ -116,31 +207,6 @@ const DashBoardScreen = ({navigation}: any) => {
   );
 
   const renderHealthTipsItem = ({item}: any) => (
-    //   <LinearGradient
-    //     colors={['#002d87', '#000000']}
-    //     start={{x: 0, y: 1}}
-    //     end={{x: 10, y: 1}}
-    //     style={styles.SquareCard1}>
-    //     <View style={{marginTop: 15, left: 10}}>
-    //       <Text style={{color: 'white', fontSize: 18, fontWeight: 600}}>
-    //         {item.Updated_Date}
-    //       </Text>
-    //     </View>
-    //     <View style={{marginTop: 10, left: 10}}>
-    //       <Text style={{color: 'white', fontSize: 18, fontWeight: 600}}>
-    //         {item.Health_Title}
-    //       </Text>
-    //     </View>
-    //     <View style={{alignSelf: 'flex-end', paddingHorizontal: 15}}>
-    //       <TouchableOpacity onPress={toggleDescription}>
-    //         <Text style={{color: 'white', fontWeight: '900'}}>Read More</Text>
-    //       </TouchableOpacity>
-    //       {showFullDescription && (
-    //         <Text style={{color: 'white'}}>{item.Health_Desc}</Text>
-    //       )}
-    //     </View>
-    //   </LinearGradient>
-    // );
     <LinearGradient
       colors={['#002d87', '#000000']}
       start={{x: 0, y: 1}}
@@ -230,7 +296,7 @@ const DashBoardScreen = ({navigation}: any) => {
                 source={require('../assets/images/location.png')}
                 style={styles.LocationImg}
               />
-              <Text>RT-MAIN(PORUR)</Text>
+              <Text>{selectedbranch}</Text>
             </View>
           )}
 
@@ -247,21 +313,51 @@ const DashBoardScreen = ({navigation}: any) => {
                     justifyContent: 'space-between',
                     padding: 16,
                   }}>
-                  <View>
-                    <Text style={{color: '#868686'}}>BONE PROFILE (MINI)</Text>
-                  </View>
-                  <View>
-                    <Text style={{color: '#3478c1', left: 60}}>INR 1</Text>
-                  </View>
-                  <View>
-                    <TouchableOpacity>
-                      <Image
-                        source={require('../assets/images/arrowDown.png')}
-                        style={{tintColor: '#2c2c2c', width: 15, height: 15}}
-                      />
-                    </TouchableOpacity>
-                  </View>
+                  <Text>
+                    {specialPackageAPIRes?.data?.Message[0]?.Service_Name}
+                  </Text>
+                  <Text style={{color: '#3478c1', left: 60}}>INR 1</Text>
+                  <TouchableOpacity onPress={handleArrowDownPress}>
+                    <Image
+                      source={require('../assets/images/arrowDown.png')}
+                      style={{tintColor: 'black', width: 15, height: 15}}
+                    />
+                  </TouchableOpacity>
                 </View>
+                {isDataVisible && (
+                  <View style={{left: 20}}>
+                    <TouchableOpacity>
+                      <View
+                        style={{
+                          backgroundColor: 'blue',
+                          padding: 5,
+                          width: 200,
+                          borderRadius: 10,
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            color: 'white',
+                            alignSelf: 'center',
+                          }}>
+                          Book Package
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                    {boneAPIRes?.isSuccess &&
+                      boneAPIRes?.data?.Code === 200 &&
+                      boneAPIRes?.data?.Message &&
+                      boneAPIRes?.data?.Message[0]?.Service_Detail?.map(
+                        item => (
+                          <Text
+                            style={{marginTop: 10, fontSize: 14}}
+                            key={item.Test_Code}>
+                            {item.Test_Name}
+                          </Text>
+                        ),
+                      )}
+                  </View>
+                )}
               </View>
             </View>
           )}
@@ -362,12 +458,12 @@ const styles = StyleSheet.create({
   },
   SquareCard: {
     width: '90%',
-    height: 50,
     borderWidth: 1,
     borderColor: '#f0f0f0',
     backgroundColor: 'white',
     alignSelf: 'center',
     marginTop: 20,
+    marginBottom: 1000,
   },
   SquareCard1: {
     width: '90%',
@@ -376,7 +472,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 15,
     borderRadius: 8,
-    marginBottom: 40,
+    marginBottom: 70,
   },
   SquareCard2: {
     width: '90%',

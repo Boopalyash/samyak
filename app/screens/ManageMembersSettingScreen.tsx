@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -12,8 +12,14 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../redux/Store';
 import {useSamyakManageMembersListPostMutation} from '../redux/service/ManageMemberListService';
 import {useSamyakDeletePatientPostMutation} from '../redux/service/DeletePatientService';
+import {useSamyakDefaultBranchPostMutation} from '../redux/service/DefaultBranchService';
+import {useFocusEffect} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ManageMembersSettingScreen = ({navigation}: any) => {
+  const [selectedbranch, setSelectedBranch] = useState('RT-MAIN(PORUR)');
+  const [defaultManageBranchAPIReq, defaultManageBranchAPIRes] =
+    useSamyakDefaultBranchPostMutation();
   // to show members list
   const [manageMembersAPIReq] = useSamyakManageMembersListPostMutation();
   // to delete the member list
@@ -24,10 +30,10 @@ const ManageMembersSettingScreen = ({navigation}: any) => {
     (state: RootState) =>
       state.manageMemberList.samyakDetailsManageMembersListPost,
   );
+
   const manageMembersObj = {
     userName: '7358722588',
   };
-  console.log('deletePatientAPIRes', deletePatientAPIRes);
 
   useEffect(() => {
     if (deletePatientAPIRes?.isSuccess) {
@@ -67,9 +73,35 @@ const ManageMembersSettingScreen = ({navigation}: any) => {
     navigation.navigate('Settings');
   };
 
-  const handleEdit = (item) => {
+  const handleEdit = item => {
     navigation.navigate('EditMember', {item});
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      AsyncStorage.getItem('selectedBranch')
+        .then(value => {
+          if (value) {
+            defaultManageBranchAPIReq({
+              userName: '7358722588',
+              Default_Firm_No: value,
+            });
+          }
+        })
+        .catch(error => console.error('Error ', error));
+      return () => {
+        console.log('Screen is unfocused');
+      };
+    }, []),
+  );
+
+  useEffect(() => {
+    if (defaultManageBranchAPIRes?.isSuccess) {
+      setSelectedBranch(
+        defaultManageBranchAPIRes?.data?.Message[0]?.Branch_Name,
+      );
+    }
+  }, [defaultManageBranchAPIRes]);
 
   const renderMemberItem = ({item}: any) => {
     return (
@@ -133,7 +165,7 @@ const ManageMembersSettingScreen = ({navigation}: any) => {
           source={require('../assets/images/location.png')}
           style={styles.LocationImg}
         />
-        <Text>RT-MAIN(PORUR)</Text>
+        <Text>{selectedbranch}</Text>
       </View>
 
       <View style={{alignSelf: 'flex-end', paddingHorizontal: 20}}>

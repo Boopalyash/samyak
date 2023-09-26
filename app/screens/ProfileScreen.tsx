@@ -1,27 +1,79 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   Image,
   TextInput,
-  FlatList,
+  Alert,
   TouchableOpacity,
 } from 'react-native';
+import {useSamyakProfilePostMutation} from '../redux/service/ProfileService';
+import {useSamyakProfileUpdatePostMutation} from '../redux/service/ProfileUpdateService';
 
 const ProfileScreen = ({navigation}: any) => {
-  const [fullName, setFullName] = useState('');
+  const [profileAPIReq, profileAPIRes] = useSamyakProfilePostMutation();
+
+  const [fullName, setFullName] = useState();
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [dob, setDOB] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [mobileNumber, setMobileNumber] = useState('');
+  const [isEditMode, setIsEditMode] = useState(false);
 
-  const handleHome = () => {
-    navigation.navigate('Settings');
+  const [updateProfileAPIReq, updateProfileAPIRes] =
+    useSamyakProfileUpdatePostMutation();
+
+  useEffect(() => {
+    const profileObj = {
+      userName: '7358722588',
+    };
+    profileAPIReq(profileObj);
+  }, []);
+
+  const handleHome = async () => {
+    if (isEditMode) {
+      const updateProfileObj = {
+        userName: '7358722588',
+        password: password,
+        Name: fullName,
+        User_Email_Id: email,
+        mobileNumber: mobileNumber,
+        dob: dob,
+      };
+      await updateProfileAPIReq(updateProfileObj);
+    }
+  };
+
+  useEffect(() => {
+    if (profileAPIRes?.isSuccess) {
+      setFullName(profileAPIRes?.data?.Message[0]?.Name);
+      setEmail(profileAPIRes?.data?.Message[0]?.User_Email_Id);
+      setDOB(profileAPIRes?.data?.Message[0]?.User_DOB);
+      setMobileNumber(profileAPIRes?.data?.Message[0]?.User_Mobile_No);
+    }
+  }, [profileAPIRes]);
+
+  useEffect(() => {
+    if (updateProfileAPIRes.isSuccess) {
+      console.log('success');
+      showAlert('Success', 'Profile Updated Successfully');
+      navigation.navigate('Settings');
+    } else if (updateProfileAPIRes.isError) {
+      showAlert('Error', updateProfileAPIRes?.error?.data?.Message[0]?.Message);
+    }
+  }, [updateProfileAPIRes]);
+
+  const showAlert = (title, message) => {
+    Alert.alert(title, message, [], {cancelable: false});
   };
 
   const handleCross = () => {
     navigation.navigate('Settings');
+  };
+
+  const handleEditProfile = () => {
+    setIsEditMode(!isEditMode);
   };
 
   return (
@@ -42,11 +94,15 @@ const ProfileScreen = ({navigation}: any) => {
       <View style={styles.divider} />
       <View style={styles.NameView}>
         <View>
-          <Text style={styles.NameText}>Ramachandran P</Text>
+          <Text style={styles.NameText}>
+            {profileAPIRes?.data?.Message[0]?.Name}
+          </Text>
         </View>
         <View style={styles.editProfileContainer}>
-          <TouchableOpacity>
-            <Text style={styles.editProfileText}>Edit Profile</Text>
+          <TouchableOpacity onPress={handleEditProfile}>
+            <Text style={styles.editProfileText}>
+              {isEditMode ? 'Cancel' : 'Edit Profile'}
+            </Text>
           </TouchableOpacity>
           <View style={styles.circle}>
             <Text style={styles.circleText}>RA</Text>
@@ -61,9 +117,10 @@ const ProfileScreen = ({navigation}: any) => {
           placeholder="Enter your name"
           value={fullName}
           onChangeText={setFullName}
+          editable={isEditMode}
         />
       </View>
-      <View style={styles.inputContainer}>
+      {/* <View style={styles.inputContainer}>
         <Text style={styles.label}>Password</Text>
         <TextInput
           style={styles.input}
@@ -71,8 +128,9 @@ const ProfileScreen = ({navigation}: any) => {
           secureTextEntry={true}
           value={password}
           onChangeText={setPassword}
+          editable={isEditMode}
         />
-      </View>
+      </View> */}
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Email</Text>
         <TextInput
@@ -92,6 +150,7 @@ const ProfileScreen = ({navigation}: any) => {
           keyboardType="numeric"
           value={dob}
           onChangeText={setDOB}
+          editable={isEditMode}
         />
       </View>
       <View style={styles.inputContainer}>
@@ -100,13 +159,16 @@ const ProfileScreen = ({navigation}: any) => {
           style={styles.input}
           placeholder="Enter your phone number"
           keyboardType="phone-pad"
-          value={phoneNumber}
-          onChangeText={setPhoneNumber}
+          value={mobileNumber}
+          onChangeText={setMobileNumber}
+          editable={isEditMode}
         />
       </View>
       <View>
         <TouchableOpacity onPress={handleHome} style={styles.HomeButton}>
-          <Text style={styles.HomeButtonText}>Home</Text>
+          <Text style={styles.HomeButtonText}>
+            {isEditMode ? 'Update' : 'Home'}
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -183,6 +245,7 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 7},
     shadowOpacity: 0.2,
     shadowRadius: 2,
+    width: '30%',
   },
   HomeButtonText: {
     color: 'white',

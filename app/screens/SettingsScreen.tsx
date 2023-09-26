@@ -9,10 +9,19 @@ import {
 } from 'react-native';
 import {useSamyakContactUsPostMutation} from '../redux/service/ContactUsService';
 import {useSamyakAboutUsPostMutation} from '../redux/service/AboutUsService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useFocusEffect} from '@react-navigation/native';
+import {useSamyakDefaultBranchPostMutation} from '../redux/service/DefaultBranchService';
+import {useSamyakNotificationCountPostMutation} from '../redux/service/NotificationCountService';
 
 const SettingsScreen = ({navigation}: any) => {
   const [contactUsAPIReq] = useSamyakContactUsPostMutation();
   const [aboutUsAPIReq] = useSamyakAboutUsPostMutation();
+  const [notificationAPIReq, notificationAPIRes] =
+    useSamyakNotificationCountPostMutation();
+  const [selectedbranch, setSelectedBranch] = useState('RT-MAIN(PORUR)');
+  const [defaultManageBranchAPIReq, defaultManageBranchAPIRes] =
+    useSamyakDefaultBranchPostMutation();
 
   // To display the contactUs screen
   useEffect(() => {
@@ -29,6 +38,40 @@ const SettingsScreen = ({navigation}: any) => {
     };
     aboutUsAPIReq(aboutUsObj);
   }, []);
+
+  // To display the notificationCount
+  useEffect(() => {
+    const notificationCountObj = {
+      userName: '7358722588',
+    };
+    notificationAPIReq(notificationCountObj);
+  }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      AsyncStorage.getItem('selectedBranch')
+        .then(value => {
+          if (value) {
+            defaultManageBranchAPIReq({
+              userName: '7358722588',
+              Default_Firm_No: value,
+            });
+          }
+        })
+        .catch(error => console.error('Error ', error));
+      return () => {
+        console.log('Screen is unfocused');
+      };
+    }, []),
+  );
+
+  useEffect(() => {
+    if (defaultManageBranchAPIRes?.isSuccess) {
+      setSelectedBranch(
+        defaultManageBranchAPIRes?.data?.Message[0]?.Branch_Name,
+      );
+    }
+  }, [defaultManageBranchAPIRes]);
 
   const settingsData = [
     {
@@ -95,6 +138,10 @@ const SettingsScreen = ({navigation}: any) => {
     navigation.navigate('Profile');
   };
 
+  const handleBell = () => {
+    navigation.navigate('Notification');
+  };
+
   const renderItem = ({item}: any) => (
     <TouchableOpacity onPress={() => handleSettingItemPress(item)}>
       <View style={styles.itemContainer}>
@@ -120,14 +167,27 @@ const SettingsScreen = ({navigation}: any) => {
       <View style={styles.headerContainer}>
         <Text style={styles.SettingsText}>Settings</Text>
         <View style={styles.imageRow}>
-          <Image
-            source={require('../assets/images/alarm.png')}
-            style={styles.image}
-          />
-          <Image
-            source={require('../assets/images/bellwhite.png')}
-            style={styles.image}
-          />
+          <TouchableOpacity>
+            <Image
+              source={require('../assets/images/alarm.png')}
+              style={styles.image}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleBell}>
+            <Image
+              source={require('../assets/images/bellwhite.png')}
+              style={styles.image}
+            />
+          </TouchableOpacity>
+
+          {notificationAPIRes?.isSuccess &&
+            notificationAPIRes?.data?.Message[0]?.Notify_Count >= 0 && (
+              <View style={styles.notificationBadge}>
+                <Text style={styles.notificationBadgeText}>
+                  {notificationAPIRes?.data?.Message[0]?.Notify_Count}
+                </Text>
+              </View>
+            )}
           <TouchableOpacity onPress={handleProfile}>
             <View style={styles.circle}>
               <Text style={styles.circleText}>RA</Text>
@@ -141,8 +201,9 @@ const SettingsScreen = ({navigation}: any) => {
           source={require('../assets/images/location.png')}
           style={styles.LocationImg}
         />
-        <Text>RT-MAIN(PORUR)</Text>
+        <Text>{selectedbranch}</Text>
       </View>
+
       <FlatList
         data={settingsData}
         renderItem={renderItem}
@@ -176,7 +237,7 @@ const styles = StyleSheet.create({
   image: {
     width: 25,
     height: 25,
-    marginLeft: 30,
+    marginLeft: 20,
     top: 20,
   },
   LocationView: {
@@ -217,11 +278,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     top: 16,
-    marginLeft: 30,
   },
   circleText: {
     color: 'black',
     fontSize: 10,
+  },
+  notificationBadge: {
+    backgroundColor: 'red',
+    borderRadius: 50,
+    paddingHorizontal: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    right: 5,
+  },
+  notificationBadgeText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 

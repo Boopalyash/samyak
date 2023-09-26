@@ -16,6 +16,7 @@ import EditAddressScreen from '../screens/EditAddressScreen';
 import EditMembersScreen from '../screens/EditMembersScreen';
 import HealthTipsDetailScreen from '../screens/HealthTipsDetailsScreen';
 import UploadPrescriptionScreen from '../screens/UploadPrescriptionScreen';
+import NotificationScreen from '../screens/NotificationScreen';
 
 const stack = createStackNavigator();
 
@@ -46,6 +47,7 @@ const ApplicationNavigation = () => {
           name="UploadDescription"
           component={UploadPrescriptionScreen}
         />
+        <stack.Screen name="Notification" component={NotificationScreen} />
       </stack.Navigator>
     </NavigationContainer>
   );
