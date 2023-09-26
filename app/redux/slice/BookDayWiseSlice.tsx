@@ -14,7 +14,7 @@ export const bookDayWiseSlice = createSlice({
       bookDayWiseService.endpoints.samyakBookDayWisePost.matchFulfilled,
       (state, {payload}) => {
         state.samyakDetailsBookdayWisePost = payload;
-        console.log('bookDayWisePayload?????????', payload);
+        // console.log('bookDayWisePayload?????????', payload);
       },
     );
   },

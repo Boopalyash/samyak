@@ -1,12 +1,10 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   Image,
-  FlatList,
   TouchableOpacity,
-  Alert,
 } from 'react-native';
 import {useSamyakNotificationListPostMutation} from '../redux/service/NotificationListService';
 
@@ -22,25 +20,6 @@ const NotificationScreen = ({navigation}: any) => {
     notificationListAPIReq(notificationListObj);
   }, []);
 
-  useEffect(() => {
-    if (notificationListAPIRes?.isSuccess) {
-      showAlert(
-        'Success',
-        notificationListAPIRes?.data?.Message[0]?.Description,
-      );
-    } else if (notificationListAPIRes?.isError) {
-      showAlert(
-        'info',
-        notificationListAPIRes?.error?.data?.Message[0]?.Message,
-      );
-    }
-  }, [notificationListAPIRes]);
-  console.log('notificationListAPIRes', notificationListAPIRes);
-
-  const showAlert = (title, message) => {
-    Alert.alert(title, message, [], {cancelable: false});
-  };
-
   const handleCross = () => {
     navigation.navigate('Settings');
   };
@@ -54,9 +33,11 @@ const NotificationScreen = ({navigation}: any) => {
         </TouchableOpacity>
       </View>
       <View style={styles.separator} />
+      {notificationListAPIRes?.isSuccess && notificationListAPIRes?.data?.Message[0]?.Notification_List?.map((item:any)=>{
+      return(
       <View>
-        <Text>{notificationListAPIRes?.data?.Message[0]?.Message}</Text>
-      </View>
+        <Text>{item?.Notify_Message}</Text>
+      </View>)})}
     </View>
   );
 };

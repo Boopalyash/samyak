@@ -67,7 +67,6 @@ const baseQueryWithInterceptor: BaseQueryFn<
       api,
       extraOptions,
     );
-    console.log('refreshResult', refreshResult);
     if (refreshResult.data && refreshResult?.data?.code === 0) {
       // store the new token
       store.dispatch(setTokenDetails(refreshResult.data));
@@ -76,7 +75,6 @@ const baseQueryWithInterceptor: BaseQueryFn<
       // retry the initial query
       result = await baseQuery(args, api, extraOptions);
     } else if (refreshResult.data && refreshResult?.data?.code === 2) {
-      console.log('Refresh-Token-Invalid');
       // navigation.navigate('Signin');
       // store.dispatch(logout());
     }

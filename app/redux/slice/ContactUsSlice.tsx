@@ -14,7 +14,7 @@ export const contactUsSlice = createSlice({
       contactUsService.endpoints.samyakContactUsPost.matchFulfilled,
       (state, {payload}) => {
         state.samyakContactUsDetailsPost = payload;
-        console.log('contactUsDetails(((((((((((', payload);
+        // console.log('contactUsDetails(((((((((((', payload);
       },
     );
   },

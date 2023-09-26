@@ -11,27 +11,24 @@ import {
 import {useSamyakLabSearchTestPostMutation} from '../redux/service/LabSearchTestService';
 
 const SearchTestLabScreen = ({navigation}: any) => {
+  const [searchText ,setSearchText] = useState('');
   const [searchTestAPIReq, searchTestAPIRes] =
     useSamyakLabSearchTestPostMutation();
   console.log('searchTestAPIRes', searchTestAPIRes);
-
-  useEffect(() => {
-    const searchTestObj = {
-      userName: '7358722588',
-      Firm_No: '',
-      Service_Type: 'T',
-      Search_Text: 'test',
-      Start_Index: 0,
-      Page_Count: 10,
-      Organ_Code: '',
-      Dept_Code: '',
-    };
+  const searchTestObj = {
+    userName: '7358722588',
+    Service_Type: 'T',
+    Search_Text: searchText,
+  };
+  useEffect(() => {    
     searchTestAPIReq(searchTestObj);
   }, []);
-
+useEffect(()=>{
+searchTestAPIReq(searchTestObj)
+},[searchText])
   useEffect(() => {
     if (searchTestAPIRes?.isSuccess) {
-      console.log('Success', searchTestAPIRes?.data?.Message[0]?.Message);
+      console.log('Success', searchTestAPIRes?.data?.Message);
     } else if (searchTestAPIRes?.isError) {
       console.log('Error', searchTestAPIRes?.error?.data?.Message[0]?.Message);
     }
@@ -41,18 +38,18 @@ const SearchTestLabScreen = ({navigation}: any) => {
     navigation.navigate('Lab');
   };
 
-  const data = [
-    {testName: 'BLEEDING TIME', price: 'INR 75'},
-    {testName: 'CLOTTING TIME', price: 'INR 75'},
-    {testName: 'GFR Estimated', price: 'INR 0'},
-    {testName: 'GNRH SIMULATION TEST(LHRH)', price: 'INR 5000'},
-    {testName: 'PT (PROTHROMBIN TIME)', price: 'INR 250'},
-  ];
+  // const data = [
+  //   {testName: 'BLEEDING TIME', price: 'INR 75'},
+  //   {testName: 'CLOTTING TIME', price: 'INR 75'},
+  //   {testName: 'GFR Estimated', price: 'INR 0'},
+  //   {testName: 'GNRH SIMULATION TEST(LHRH)', price: 'INR 5000'},
+  //   {testName: 'PT (PROTHROMBIN TIME)', price: 'INR 250'},
+  // ];
 
   const renderItem = ({item}: any) => (
     <View style={styles.testItemContainer}>
-      <Text style={styles.testName}>{item.testName}</Text>
-      <Text style={styles.testPrice}>{item.price}</Text>
+      <Text style={styles.testName}>{item.Sub_Dept_Name}</Text>
+      <Text style={styles.testPrice}>{item.Amount}</Text>
       <TouchableOpacity style={styles.addToCartButton}>
         <View style={styles.addToCartContainer}>
           <Image
@@ -84,7 +81,7 @@ const SearchTestLabScreen = ({navigation}: any) => {
             style={styles.searchIcon}
           />
         </TouchableOpacity>
-        <TextInput style={styles.inputText} placeholderTextColor="#b9c5a0" />
+        <TextInput style={styles.inputText} placeholderTextColor="#b9c5a0" value={searchText} onChangeText={text => setSearchText(text)} />
         <Image
           source={require('../assets/images/addCart.png')}
           style={styles.CartIcon}
@@ -92,8 +89,8 @@ const SearchTestLabScreen = ({navigation}: any) => {
       </View>
 
       <FlatList
-        data={data}
-        keyExtractor={item => item.testName}
+        data={searchTestAPIRes?.isSuccess && searchTestAPIRes?.data?.Message}
+        keyExtractor={item => item.RowNumber}
         renderItem={renderItem}
         contentContainerStyle={styles.flatListContainer}
       />

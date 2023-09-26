@@ -14,7 +14,7 @@ export const defaultBranchSlice = createSlice({
       defaultBranchService.endpoints.samyakDefaultBranchPost.matchFulfilled,
       (state, {payload}) => {
         state.samyakDetailsDefaultBranchPost = payload;
-        console.log('defaultBranchPayload?????????', payload);
+        // console.log('defaultBranchPayload?????????', payload);
       },
     );
   },

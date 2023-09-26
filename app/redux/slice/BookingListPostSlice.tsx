@@ -14,7 +14,7 @@ export const bookingListPostSlice = createSlice({
       bookingListPostService.endpoints.samyakBookingListPost.matchFulfilled,
       (state, {payload}) => {
         state.samyakDetailsBookingListPost = payload.Message;
-        console.log('BookingListPayload?????????', payload);
+        // console.log('BookingListPayload?????????', payload);
       },
     );
   },

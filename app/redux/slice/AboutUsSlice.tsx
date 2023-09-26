@@ -14,7 +14,6 @@ export const aboutUsSlice = createSlice({
       aboutUsService.endpoints.samyakAboutUsPost.matchFulfilled,
       (state, {payload}) => {
         state.samyakDetailsAboutUsPost = payload;
-        console.log('aboutUsPayload?????????', payload);
       },
     );
   },

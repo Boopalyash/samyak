@@ -53,7 +53,7 @@ const baseQueryWithInterceptor: BaseQueryFn<
   //   return NetworkError;
   // }
   let result = await baseQuery(args, api, extraOptions);
-  // console.log("API <----> Result", result);
+  // .log("API <----> Result", result);
 
   if (result.error && result.error.status === 401) {
     // try to get a new token for unauthorised access

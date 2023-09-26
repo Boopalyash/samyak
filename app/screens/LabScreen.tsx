@@ -17,6 +17,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useSamyakLabChooseBonePostMutation} from '../redux/service/LabChoosePackageBone';
 import {useSamyakBookTypePostMutation} from '../redux/service/BookTypeService';
 import {useSamyakSpecialPackagePostMutation} from '../redux/service/SpecialPackageService';
+import {useSamyakAddressPostMutation} from '../redux/service/ManageAddressPostService';
+import {useSamyakRelationshipPostMutation} from '../redux/service/RelationshipService';
 
 const LabScreen = ({navigation}: any) => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -32,7 +34,7 @@ const LabScreen = ({navigation}: any) => {
   const [selectedbranch, setSelectedBranch] = useState('RT-MAIN(PORUR)');
   const [setSpecialPackage] = useState([]);
   const [setBoneData] = useState([]);
-  const [bookTypeData, setBookTypeData] = useState([]);
+  const [bookTypeData, setBookTypeData] = useState();
   const [isDataVisible, setIsDataVisible] = useState(false);
   const [badgeCount, setBadgeCount] = useState(0);
   const [isInCart, setIsInCart] = useState(false);
@@ -53,39 +55,35 @@ const LabScreen = ({navigation}: any) => {
   //api for special package in stepper 1
   const [specialPackageAPIReq, specialPackageAPIRes] =
     useSamyakSpecialPackagePostMutation();
+  const [getAddressAPIReq, getAddressAPIRes] = useSamyakAddressPostMutation();
+  const [relatioshipAPIReq, relatioshipAPIRes] =
+    useSamyakRelationshipPostMutation();
+
+  console.log(currentStep, 'currentStep**************************************');
+  useEffect(() => {
+    setShowChooseTestView(currentStep === 1);
+    setShowPreferredOptionView(currentStep === 2);
+    setShowChoosePatientView(currentStep === 3);
+    setShowBookingDetails(currentStep === 4);
+    const bookTypeObj = {
+      userName: '7358722588',
+    };
+    if (currentStep === 2) {
+      booktypeAPIReq(bookTypeObj);
+    }
+    if (currentStep === 3) {
+      getAddressAPIReq(bookTypeObj);
+      relatioshipAPIReq(bookTypeObj);
+    }
+  }, [currentStep]);
+  console.log(booktypeAPIRes, 'booktypeAPIRes');
 
   const handleNext = () => {
-    if (currentStep < 4) {
-      setCurrentStep(currentStep + 1);
-
-      if (currentStep === 1) {
-        setShowChooseTestView(false);
-        setShowPreferredOptionView(true);
-      } else if (currentStep === 2) {
-        setShowPreferredOptionView(false);
-        setShowChoosePatientView(true);
-      } else if (currentStep === 3) {
-        setShowChoosePatientView(false);
-        setShowBookingDetails(true);
-      }
-    }
+    setCurrentStep(currentStep + 1);
   };
 
   const handlePrev = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-
-      if (currentStep === 2) {
-        setShowChooseTestView(true);
-        setShowPreferredOptionView(false);
-      } else if (currentStep === 3) {
-        setShowPreferredOptionView(true);
-        setShowChoosePatientView(false);
-      } else if (currentStep === 4) {
-        setShowChoosePatientView(true);
-        setShowBookingDetails(false);
-      }
-    }
+    setCurrentStep(currentStep - 1);
   };
 
   const isBookingDetailsVisible = currentStep === 4;
@@ -103,7 +101,7 @@ const LabScreen = ({navigation}: any) => {
   };
 
   const handleButtonPresssBack = () => {
-    navigation.navigate('Profile');
+    setCurrentStep(currentStep - 1);
   };
 
   const handleCalendarToggle = () => {
@@ -167,28 +165,6 @@ const LabScreen = ({navigation}: any) => {
       });
   }, []);
 
-  // useEffect for book type
-  // useEffect(() => {
-  //   const bookTypeObj = {
-  //     userName: '7358722588',
-  //   };
-  //   booktypeAPIReq(bookTypeObj)
-  //     .unwrap()
-  //     .then(response => {
-  //       if (response.SuccessFlag === 'true') {
-  //         setBookTypeData(response.Message);
-  //       }
-  //     });
-  // }, []);
-  useEffect(() => {
-    if (booktypeAPIRes?.SuccessFlag === 'true') {
-      const types = booktypeAPIRes?.Message?.map(
-        booking => booking.Type_Of_Booking,
-      );
-      setBookTypeData(types);
-    }
-  }, []);
-
   const handleArrowDownPress = () => {
     setIsDataVisible(prevState => !prevState);
   };
@@ -211,6 +187,15 @@ const LabScreen = ({navigation}: any) => {
     setShowCalendar(false);
     setSelectedIndex('');
   }, [currentStep]);
+  useEffect(() => {
+    if (booktypeAPIRes?.isSuccess) {
+      const typeOfBookingArray = booktypeAPIRes?.data?.Message.map(
+        (booking: any) => booking.Type_Of_Booking,
+      );
+      setBookTypeData(typeOfBookingArray);
+    }
+  }, [booktypeAPIRes]);
+  console.log(bookTypeData, '////////////');
 
   return (
     <ScrollView style={styles.MainContainer}>
@@ -249,8 +234,7 @@ const LabScreen = ({navigation}: any) => {
       <View style={styles.stepperContainer}>
         <View style={styles.stepContainer}>
           <TouchableOpacity
-            style={[styles.step, currentStep >= 1 && styles.activeStep]}
-            onPress={() => setCurrentStep(1)}>
+            style={[styles.step, currentStep >= 1 && styles.activeStep]}>
             <Text
               style={[
                 styles.stepText,
@@ -264,8 +248,7 @@ const LabScreen = ({navigation}: any) => {
 
         <View style={styles.stepContainer}>
           <TouchableOpacity
-            style={[styles.step, currentStep >= 2 && styles.activeStep]}
-            onPress={() => setCurrentStep(2)}>
+            style={[styles.step, currentStep >= 2 && styles.activeStep]}>
             <Text
               style={[
                 styles.stepText,
@@ -279,8 +262,7 @@ const LabScreen = ({navigation}: any) => {
 
         <View style={styles.stepContainer}>
           <TouchableOpacity
-            style={[styles.step, currentStep >= 3 && styles.activeStep]}
-            onPress={() => setCurrentStep(3)}>
+            style={[styles.step, currentStep >= 3 && styles.activeStep]}>
             <Text
               style={[
                 styles.stepText,
@@ -294,8 +276,7 @@ const LabScreen = ({navigation}: any) => {
 
         <View style={styles.stepContainer}>
           <TouchableOpacity
-            style={[styles.step, currentStep >= 4 && styles.activeStep]}
-            onPress={() => setCurrentStep(4)}>
+            style={[styles.step, currentStep >= 4 && styles.activeStep]}>
             <Text
               style={[
                 styles.stepText,
@@ -457,7 +438,7 @@ const LabScreen = ({navigation}: any) => {
 
           <View>
             <SegmentedControlTab
-              values={['Home', 'Walk IN']}
+              values={bookTypeData}
               selectedIndex={selectedIndex}
               onTabPress={index => {
                 setSelectedIndex(index);
@@ -474,38 +455,40 @@ const LabScreen = ({navigation}: any) => {
             />
           </View>
 
-          <View>
-            <View style={{left: 20, marginTop: 10}}>
-              <Text>Test in Cart</Text>
-            </View>
+          {selectedIndex === '' && (
+            <View>
+              <View style={{left: 20, marginTop: 10}}>
+                <Text>Test in Cart</Text>
+              </View>
 
-            <View style={styles.LipidView}>
-              <Text style={{color: '#676767'}}>BONE PROFILE(MINI)</Text>
-              <Text style={{color: '#696969'}}>INR 1.00</Text>
-            </View>
+              <View style={styles.LipidView}>
+                <Text style={{color: '#676767'}}>BONE PROFILE(MINI)</Text>
+                <Text style={{color: '#696969'}}>INR 1.00</Text>
+              </View>
 
-            <View style={styles.AmoutPayableView}>
-              <Text style={{color: '#3a5ba1'}}>Sub Total</Text>
-              <Text style={{color: '#6c6c6c'}}>INR 1.00</Text>
-            </View>
+              <View style={styles.AmoutPayableView}>
+                <Text style={{color: '#3a5ba1'}}>Sub Total</Text>
+                <Text style={{color: '#6c6c6c'}}>INR 1.00</Text>
+              </View>
 
-            <View
-              style={{
-                marginTop: 10,
-                width: '30%',
-                left: 25,
-              }}>
-              <TouchableOpacity
-                style={styles.buttons}
-                onPress={handleButtonPresssBack}>
-                <Image
-                  source={require('../assets/images/backArrowBlack.png')}
-                  style={styles.buttonImages}
-                />
-                <Text style={styles.buttonTexts}>Back</Text>
-              </TouchableOpacity>
+              <View
+                style={{
+                  marginTop: 10,
+                  width: '30%',
+                  left: 25,
+                }}>
+                <TouchableOpacity
+                  style={styles.buttons}
+                  onPress={handleButtonPresssBack}>
+                  <Image
+                    source={require('../assets/images/backArrowBlack.png')}
+                    style={styles.buttonImages}
+                  />
+                  <Text style={styles.buttonTexts}>Back</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
+          )}
 
           {showCalendar && (
             <View>
@@ -580,7 +563,21 @@ const LabScreen = ({navigation}: any) => {
             </TouchableOpacity>
           </View>
           <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-            <View style={styles.ImgView}>
+            {relatioshipAPIRes?.isSuccess &&
+              relatioshipAPIRes?.data?.Message?.map((item: any) => {
+                return (
+                  <View style={styles.ImgView}>
+                    <Image
+                      source={require('../assets/images/human.png')}
+                      style={styles.ImgStyle}
+                    />
+                    <Text style={{left: 10, alignSelf: 'center'}}>
+                      {item?.RelationShip_Desc}
+                    </Text>
+                  </View>
+                );
+              })}
+            {/* <View style={styles.ImgView}>
               <Image
                 source={require('../assets/images/human.png')}
                 style={styles.ImgStyle}
@@ -602,7 +599,7 @@ const LabScreen = ({navigation}: any) => {
                 style={styles.ImgStyle}
               />
               <Text style={{left: 10, alignSelf: 'center'}}>Mother</Text>
-            </View>
+            </View> */}
           </View>
 
           <View style={styles.ChooseAddressView}>
@@ -611,22 +608,31 @@ const LabScreen = ({navigation}: any) => {
               <Text style={{color: '#0f97f5', fontSize: 20}}>Add</Text>
             </TouchableOpacity>
           </View>
+          {console.log(
+            getAddressAPIRes?.data?.Message[0]?.User_Address,
+            '++++++++++++++++++++',
+          )}
 
-          <View style={styles.AddressView}>
-            <Text>Home</Text>
-            <View
-              style={{
-                marginTop: 10,
-                flexDirection: 'row',
-              }}>
-              <Text style={{flex: 1}}>
-                2/21, Rajeswari Nagar, Porur, Chennai, Tamil Nadu, 60016
-              </Text>
-              <TouchableOpacity>
-                <View style={styles.DotView} />
-              </TouchableOpacity>
-            </View>
-          </View>
+          {getAddressAPIRes?.isSuccess &&
+            getAddressAPIRes?.data?.Message[0]?.User_Address?.map(
+              (item: any) => {
+                return (
+                  <View style={styles.AddressView}>
+                    <Text>{item?.Address_Type_Desc}</Text>
+                    <View
+                      style={{
+                        marginTop: 10,
+                        flexDirection: 'row',
+                      }}>
+                      <Text style={{flex: 1}}>{item?.Full_Address}</Text>
+                      <TouchableOpacity>
+                        <View style={styles.DotView} />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                );
+              },
+            )}
 
           <View style={styles.BackNextButtonView}>
             <TouchableOpacity style={styles.backButton} onPress={handlePrev}>

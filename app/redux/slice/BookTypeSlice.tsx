@@ -14,7 +14,7 @@ export const bookTypeSlice = createSlice({
       bookTypeService.endpoints.samyakBookTypePost.matchFulfilled,
       (state, {payload}) => {
         state.samyakDetailsBookTypePost = payload;
-        console.log('bookTypePayload?????????', payload);
+        // console.log('bookTypePayload?????????', payload);
       },
     );
   },

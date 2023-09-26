@@ -14,7 +14,7 @@ export const appSettingsSlice = createSlice({
       appSettingsService.endpoints.samyakAppSettingsPost.matchFulfilled,
       (state, {payload}) => {
         state.samyakDetailsAppSettingsPost = payload;
-        console.log('appSettingsPayload?????????', payload);
+        // console.log('appSettingsPayload?????????', payload);
       },
     );
   },

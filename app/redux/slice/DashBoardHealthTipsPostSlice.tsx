@@ -14,7 +14,7 @@ export const healthTipsPostSlice = createSlice({
       healthTipsPostService.endpoints.samyakHealthPost.matchFulfilled,
       (state, {payload}) => {
         state.samyakHealthDetailsPost = payload.Message;
-        console.log('HealthDetails@@@@@@@@@@@@@@@@', payload);
+        // console.log('HealthDetails@@@@@@@@@@@@@@@@', payload);
       },
     );
   },

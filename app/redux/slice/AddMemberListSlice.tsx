@@ -14,7 +14,6 @@ export const addMemberListSlice = createSlice({
       addMemberListService.endpoints.samyakAddMemberListPost.matchFulfilled,
       (state, {payload}) => {
         state.samyakDetailsAddMemberListPost = payload;
-        console.log('addMemberListPayload?????????', payload);
       },
     );
   },

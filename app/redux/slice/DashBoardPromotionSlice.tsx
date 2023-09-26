@@ -14,7 +14,7 @@ export const promotionPostSlice = createSlice({
       promotionPostService.endpoints.samyakPromotionPost.matchFulfilled,
       (state, {payload}) => {
         state.samyakPromotionDetailsPost = payload.Message;
-        console.log('promotionPayload?????????', payload);
+        // console.log('promotionPayload?????????', payload);
       },
     );
   },
