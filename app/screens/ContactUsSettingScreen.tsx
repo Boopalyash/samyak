@@ -14,6 +14,10 @@ const ContactUsSettingScreen = ({navigation}: any) => {
   const contactUsData = useSelector(
     (state: RootState) => state.contactUs.samyakContactUsDetailsPost,
   );
+<<<<<<< HEAD
+=======
+  console.log('contact&&&&&&', contactUsData);
+>>>>>>> e4e5e5d3ae3aec69547a0531e26d97d2df6a09ea
 
   const handleProfile = () => {
     navigation.navigate('Settings');
