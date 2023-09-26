@@ -96,7 +96,6 @@ const ContactUsSettingScreen = ({navigation}: any) => {
             source={require('../assets/images/callIcon.png')}
             style={styles.phoneImage}
             resizeMode="contain"
-            
           />
         </View>
         <View style={styles.CenterText}>
