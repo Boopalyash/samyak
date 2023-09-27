@@ -7,25 +7,29 @@ import {
   TextInput,
   TouchableOpacity,
   FlatList,
+  ScrollView,
 } from 'react-native';
 import {useSamyakLabSearchTestPostMutation} from '../redux/service/LabSearchTestService';
 
 const SearchTestLabScreen = ({navigation}: any) => {
-  const [searchText ,setSearchText] = useState('');
+  const [searchText, setSearchText] = useState('');
   const [searchTestAPIReq, searchTestAPIRes] =
     useSamyakLabSearchTestPostMutation();
-  console.log('searchTestAPIRes', searchTestAPIRes);
+
   const searchTestObj = {
     userName: '7358722588',
     Service_Type: 'T',
     Search_Text: searchText,
   };
-  useEffect(() => {    
+
+  useEffect(() => {
     searchTestAPIReq(searchTestObj);
   }, []);
-useEffect(()=>{
-searchTestAPIReq(searchTestObj)
-},[searchText])
+
+  useEffect(() => {
+    searchTestAPIReq(searchTestObj);
+  }, [searchText]);
+
   useEffect(() => {
     if (searchTestAPIRes?.isSuccess) {
       console.log('Success', searchTestAPIRes?.data?.Message);
@@ -37,14 +41,6 @@ searchTestAPIReq(searchTestObj)
   const handleCross = () => {
     navigation.navigate('Lab');
   };
-
-  // const data = [
-  //   {testName: 'BLEEDING TIME', price: 'INR 75'},
-  //   {testName: 'CLOTTING TIME', price: 'INR 75'},
-  //   {testName: 'GFR Estimated', price: 'INR 0'},
-  //   {testName: 'GNRH SIMULATION TEST(LHRH)', price: 'INR 5000'},
-  //   {testName: 'PT (PROTHROMBIN TIME)', price: 'INR 250'},
-  // ];
 
   const renderItem = ({item}: any) => (
     <View style={styles.testItemContainer}>
@@ -81,19 +77,26 @@ searchTestAPIReq(searchTestObj)
             style={styles.searchIcon}
           />
         </TouchableOpacity>
-        <TextInput style={styles.inputText} placeholderTextColor="#b9c5a0" value={searchText} onChangeText={text => setSearchText(text)} />
+        <TextInput
+          style={styles.inputText}
+          placeholderTextColor="#b9c5a0"
+          value={searchText}
+          onChangeText={text => setSearchText(text)}
+        />
         <Image
           source={require('../assets/images/addCart.png')}
           style={styles.CartIcon}
         />
       </View>
 
-      <FlatList
-        data={searchTestAPIRes?.isSuccess && searchTestAPIRes?.data?.Message}
-        keyExtractor={item => item.RowNumber}
-        renderItem={renderItem}
-        contentContainerStyle={styles.flatListContainer}
-      />
+      <ScrollView>
+        <FlatList
+          data={searchTestAPIRes?.isSuccess && searchTestAPIRes?.data?.Message}
+          keyExtractor={item => item.RowNumber}
+          renderItem={renderItem}
+          contentContainerStyle={styles.flatListContainer}
+        />
+      </ScrollView>
 
       <View style={styles.bottomTextContainer}>
         <Text style={styles.bottomText}>Total Cart Value INR 0</Text>

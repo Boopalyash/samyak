@@ -22,7 +22,8 @@ import {useSamyakRelationshipPostMutation} from '../redux/service/RelationshipSe
 
 const LabScreen = ({navigation}: any) => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [selectedIndex, setSelectedIndex] = useState('');
+  // const [selectedIndex, setSelectedIndex] = useState('');
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [showChooseTestView, setShowChooseTestView] = useState(true);
   const [showPreferredOptionView, setShowPreferredOptionView] = useState(false);
   const [showChoosePatientView, setShowChoosePatientView] = useState(false);
@@ -38,7 +39,7 @@ const LabScreen = ({navigation}: any) => {
   const [isDataVisible, setIsDataVisible] = useState(false);
   const [badgeCount, setBadgeCount] = useState(0);
   const [isInCart, setIsInCart] = useState(false);
-  const padZero = num => (num < 10 ? `0${num}` : `${num}`);
+  const padZero = (num: any) => (num < 10 ? `0${num}` : `${num}`);
 
   console.log('showCalender', showCalendar);
   // api for branch
@@ -55,11 +56,14 @@ const LabScreen = ({navigation}: any) => {
   //api for special package in stepper 1
   const [specialPackageAPIReq, specialPackageAPIRes] =
     useSamyakSpecialPackagePostMutation();
+
+  //api for show address in stepper 3
   const [getAddressAPIReq, getAddressAPIRes] = useSamyakAddressPostMutation();
+
+  //api for show patient relation in stepper 3
   const [relatioshipAPIReq, relatioshipAPIRes] =
     useSamyakRelationshipPostMutation();
 
-  console.log(currentStep, 'currentStep**************************************');
   useEffect(() => {
     setShowChooseTestView(currentStep === 1);
     setShowPreferredOptionView(currentStep === 2);
@@ -195,7 +199,6 @@ const LabScreen = ({navigation}: any) => {
       setBookTypeData(typeOfBookingArray);
     }
   }, [booktypeAPIRes]);
-  console.log(bookTypeData, '////////////');
 
   return (
     <ScrollView style={styles.MainContainer}>
@@ -399,13 +402,15 @@ const LabScreen = ({navigation}: any) => {
                   {boneAPIRes?.isSuccess &&
                     boneAPIRes?.data?.Code === 200 &&
                     boneAPIRes?.data?.Message &&
-                    boneAPIRes?.data?.Message[0]?.Service_Detail?.map(item => (
-                      <Text
-                        style={{marginTop: 10, fontSize: 14}}
-                        key={item.Test_Code}>
-                        {item.Test_Name}
-                      </Text>
-                    ))}
+                    boneAPIRes?.data?.Message[0]?.Service_Detail?.map(
+                      (item: any) => (
+                        <Text
+                          style={{marginTop: 10, fontSize: 14}}
+                          key={item.Test_Code}>
+                          {item.Test_Name}
+                        </Text>
+                      ),
+                    )}
                 </View>
               )}
             </View>
@@ -562,45 +567,26 @@ const LabScreen = ({navigation}: any) => {
               <Text style={{color: '#0f97f5', fontSize: 20}}>Add</Text>
             </TouchableOpacity>
           </View>
-          <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-            {relatioshipAPIRes?.isSuccess &&
-              relatioshipAPIRes?.data?.Message?.map((item: any) => {
-                return (
-                  <View style={styles.ImgView}>
-                    <Image
-                      source={require('../assets/images/human.png')}
-                      style={styles.ImgStyle}
-                    />
-                    <Text style={{left: 10, alignSelf: 'center'}}>
-                      {item?.RelationShip_Desc}
-                    </Text>
-                  </View>
-                );
-              })}
-            {/* <View style={styles.ImgView}>
-              <Image
-                source={require('../assets/images/human.png')}
-                style={styles.ImgStyle}
-              />
-              <Text style={{left: 10, alignSelf: 'center'}}>Self</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <View style={{flexDirection: 'row'}}>
+              {relatioshipAPIRes?.isSuccess &&
+                relatioshipAPIRes?.data?.Message?.map((item: any) => {
+                  return (
+                    <View
+                      style={{...styles.ImgView, marginLeft: 10}}
+                      key={item?.RelationShip_Id}>
+                      <Image
+                        source={require('../assets/images/human.png')}
+                        style={styles.ImgStyle}
+                      />
+                      <Text style={{left: 10, alignSelf: 'center'}}>
+                        {item?.RelationShip_Desc}
+                      </Text>
+                    </View>
+                  );
+                })}
             </View>
-
-            <View style={styles.ImgView}>
-              <Image
-                source={require('../assets/images/human.png')}
-                style={styles.ImgStyle}
-              />
-              <Text style={{left: 10, alignSelf: 'center'}}>Father</Text>
-            </View>
-
-            <View style={styles.ImgView}>
-              <Image
-                source={require('../assets/images/human.png')}
-                style={styles.ImgStyle}
-              />
-              <Text style={{left: 10, alignSelf: 'center'}}>Mother</Text>
-            </View> */}
-          </View>
+          </ScrollView>
 
           <View style={styles.ChooseAddressView}>
             <Text style={{fontSize: 20}}>Choose Address</Text>
@@ -608,10 +594,6 @@ const LabScreen = ({navigation}: any) => {
               <Text style={{color: '#0f97f5', fontSize: 20}}>Add</Text>
             </TouchableOpacity>
           </View>
-          {console.log(
-            getAddressAPIRes?.data?.Message[0]?.User_Address,
-            '++++++++++++++++++++',
-          )}
 
           {getAddressAPIRes?.isSuccess &&
             getAddressAPIRes?.data?.Message[0]?.User_Address?.map(
