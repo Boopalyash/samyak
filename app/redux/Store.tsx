@@ -47,6 +47,7 @@ import bookDayWise from './slice/BookDayWiseSlice';
 import specialPackage from './slice/SpecialPackageSlice';
 import appSettings from './slice/AppSettingsSlice';
 // import forgetPassword from './slice/forgetPasswordSlice';
+import notificationUpdate from './slice/NotificationUpdateSlice';
 
 const reducers = combineReducers({
   [api.reducerPath]: api.reducer,
@@ -83,6 +84,7 @@ const reducers = combineReducers({
   specialPackage,
   appSettings,
   // forgetPassword,
+  notificationUpdate,
 });
 
 const persistConfig = {

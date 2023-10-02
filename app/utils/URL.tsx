@@ -49,6 +49,7 @@ export const LAB_TEST_PACKAGE = 'Test_Package';
 // Notification api
 export const NOTIFICATION_COUNT = 'User_Notify_In_Count';
 export const NOTIFICATION_LIST = 'User_Notify_In_List';
+export const NOTIFICATION_COUNT_COUNT = 'User_Notify_Update';
 
 // Profile api
 export const USER_INFO = 'User_View';
