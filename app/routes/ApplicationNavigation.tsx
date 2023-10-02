@@ -17,6 +17,7 @@ import EditMembersScreen from '../screens/EditMembersScreen';
 import HealthTipsDetailScreen from '../screens/HealthTipsDetailsScreen';
 import UploadPrescriptionScreen from '../screens/UploadPrescriptionScreen';
 import NotificationScreen from '../screens/NotificationScreen';
+import ForgetPasswordScreen from '../screens/ForgetPasswordScreen';
 
 const stack = createStackNavigator();
 
@@ -30,6 +31,7 @@ const ApplicationNavigation = () => {
         <stack.Screen name="BookingId" component={BookingIdScreen} />
         <stack.Screen name="SearchTest" component={SearchTestLabScreen} />
         <stack.Screen name="Profile" component={ProfileScreen} />
+        <stack.Screen name="forgetpassword" component={ForgetPasswordScreen} />
         <stack.Screen
           name="ManageBranch"
           component={ManageBranchSettingScreen}

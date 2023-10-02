@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -6,10 +6,19 @@ import {
   TextInput,
   Image,
   TouchableOpacity,
+  Alert,
+  ToastAndroid,
 } from 'react-native';
+import {useSamyakForgetPasswordPostMutation} from '../redux/service/ForgetPasswordService';
 
-const ForgetPasswordScreen = () => {
+const ForgetPasswordScreen = ({navigation}: any) => {
   const [mobileNumber, setMobileNumber] = useState('');
+  const toastStyle = {
+    backgroundColor: 'red',
+    color: 'white',
+  };
+  const [forgetPasswordReq, forgetPasswordRes] =
+    useSamyakForgetPasswordPostMutation();
 
   const handleMobileNumberChange = (text: string) => {
     const numericRegex = /^[0-9]*$/;
@@ -17,6 +26,40 @@ const ForgetPasswordScreen = () => {
       setMobileNumber(text);
     }
   };
+
+  const handleOTP = () => {
+    forgetPasswordReq({
+      userName: '7358722588',
+      Mobile_No: mobileNumber,
+    });
+  };
+  console.log(mobileNumber, 'no');
+  const showAlert = (title: string, message: string) => {
+    Alert.alert(title, message, [], {cancelable: false});
+  };
+  useEffect(() => {
+    if (forgetPasswordRes.isSuccess) {
+      // showAlert('Success', forgetPasswordRes?.data?.message);
+console.log(forgetPasswordRes,"forgetPasswordRes")
+      console.log('success',forgetPasswordRes);
+      ToastAndroid.showWithGravity(
+        "Successfully OTP send to your mobile number",
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+        toastStyle
+      );
+    } else if (forgetPasswordRes.isError && forgetPasswordRes?.error?.data) {
+      ToastAndroid.showWithGravity(
+        forgetPasswordRes?.error?.data?.Message[0]?.Message,
+        ToastAndroid.LONG,
+        ToastAndroid.TOP,
+        toastStyle
+      );
+      console.log('success',forgetPasswordRes);
+
+      // showAlert('Error', forgetPasswordRes?.error?.data?.message);
+    }
+  }, [forgetPasswordRes]);
 
   return (
     <View>
@@ -50,12 +93,12 @@ const ForgetPasswordScreen = () => {
         />
 
         <View>
-          <TouchableOpacity style={styles.loginButton}>
+          <TouchableOpacity style={styles.loginButton} onPress={handleOTP}>
             <Text style={styles.loginButtonText}>Get OTP</Text>
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={()=>navigation.navigate("Login")}>
           <View style={styles.BackToView}>
             <Text style={styles.BackToText}>Back to Login</Text>
           </View>

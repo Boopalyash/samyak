@@ -19,7 +19,7 @@ import {useSamyakBookTypePostMutation} from '../redux/service/BookTypeService';
 import {useSamyakSpecialPackagePostMutation} from '../redux/service/SpecialPackageService';
 import {useSamyakAddressPostMutation} from '../redux/service/ManageAddressPostService';
 import {useSamyakRelationshipPostMutation} from '../redux/service/RelationshipService';
-
+import {useSamyakBookDayWisePostMutation} from '../redux/service/BookDayWiseService';
 const LabScreen = ({navigation}: any) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedIndex, setSelectedIndex] = useState('');
@@ -40,14 +40,12 @@ const LabScreen = ({navigation}: any) => {
   const [isInCart, setIsInCart] = useState(false);
   const padZero = num => (num < 10 ? `0${num}` : `${num}`);
 
-  console.log('showCalender', showCalendar);
   // api for branch
   const [defaultManageBranchAPIReq, defaultManageBranchAPIRes] =
     useSamyakDefaultBranchPostMutation();
 
   // api for  bone profile in stepper 1
   const [boneAPIReq, boneAPIRes] = useSamyakLabChooseBonePostMutation();
-  console.log('boneAPIRes', boneAPIRes);
 
   // api for bookType in stepper 2
   const [booktypeAPIReq, booktypeAPIRes] = useSamyakBookTypePostMutation();
@@ -58,8 +56,8 @@ const LabScreen = ({navigation}: any) => {
   const [getAddressAPIReq, getAddressAPIRes] = useSamyakAddressPostMutation();
   const [relatioshipAPIReq, relatioshipAPIRes] =
     useSamyakRelationshipPostMutation();
-
-  console.log(currentStep, 'currentStep**************************************');
+  const [dayWiseApiReq, dayWiseApiRes] = useSamyakBookDayWisePostMutation();
+  console.log(dayWiseApiRes, 'dayWiseApiRes');
   useEffect(() => {
     setShowChooseTestView(currentStep === 1);
     setShowPreferredOptionView(currentStep === 2);
@@ -76,7 +74,6 @@ const LabScreen = ({navigation}: any) => {
       relatioshipAPIReq(bookTypeObj);
     }
   }, [currentStep]);
-  console.log(booktypeAPIRes, 'booktypeAPIRes');
 
   const handleNext = () => {
     setCurrentStep(currentStep + 1);
@@ -111,7 +108,6 @@ const LabScreen = ({navigation}: any) => {
   // to display the branch
   useFocusEffect(
     React.useCallback(() => {
-      console.log('Component gained focus. Setting showCalendar to false');
       AsyncStorage.getItem('selectedBranch')
         .then(value => {
           if (value) {
@@ -123,7 +119,7 @@ const LabScreen = ({navigation}: any) => {
         })
         .catch(error => console.error('Error ', error));
       return () => {
-        console.log('Screen is unfocused');
+        // console.log('Screen is unfocused');
       };
     }, []),
   );
@@ -195,7 +191,6 @@ const LabScreen = ({navigation}: any) => {
       setBookTypeData(typeOfBookingArray);
     }
   }, [booktypeAPIRes]);
-  console.log(bookTypeData, '////////////');
 
   return (
     <ScrollView style={styles.MainContainer}>
@@ -522,11 +517,26 @@ const LabScreen = ({navigation}: any) => {
                       day.month,
                     )}/${padZero(day.day)}`;
                     setSelectedDate(formattedDate);
-                    setShowCalendar(false);
+                    // setShowCalendar(false);
+                    dayWiseApiReq({
+                      userName: '7358722588',
+                      Type_Of_Booking: selectedIndex===0 ? 'H' : 'W',
+                      Date_Of_Booking: formattedDate,
+                    });
+                  }}
+                  theme={{
+                    backgroundColor: '#ffffff',
+                    calendarBackground: '#ffffff',
+                    textSectionTitleColor: '#b6c1cd',
+                    selectedDayBackgroundColor: '#00adf5',
+                    selectedDayTextColor: '#ffffff',
+                    todayTextColor: '#00adf5',
+                    dayTextColor: '#2d4150',
+                    textDisabledColor: '#d9e'
                   }}
                 />
               )}
-
+{console.log(selectedIndex)}
               <View style={styles.BackNextButtonView}>
                 <TouchableOpacity
                   style={styles.backButton}
@@ -608,10 +618,6 @@ const LabScreen = ({navigation}: any) => {
               <Text style={{color: '#0f97f5', fontSize: 20}}>Add</Text>
             </TouchableOpacity>
           </View>
-          {console.log(
-            getAddressAPIRes?.data?.Message[0]?.User_Address,
-            '++++++++++++++++++++',
-          )}
 
           {getAddressAPIRes?.isSuccess &&
             getAddressAPIRes?.data?.Message[0]?.User_Address?.map(

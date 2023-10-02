@@ -63,3 +63,7 @@ export const SPECIAL_PACKAGE = 'Special_Package';
 
 // Bottom navigation text
 export const CONFIG = 'App_Settings';
+
+//opt
+export const OTP_SEND = 'OTP_Send';
+

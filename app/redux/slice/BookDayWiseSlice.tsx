@@ -1,17 +1,17 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {bookDayWiseService} from '../service/BookDayWiseService';
+import {BookDayWiseService} from '../service/BookDayWiseService';
 
 const initialState = {
   samyakDetailsBookdayWisePost: [],
 };
 
-export const bookDayWiseSlice = createSlice({
-  name: 'bookDayWise',
+export const BookDayWiseSlice = createSlice({
+  name: 'BookDayWise',
   initialState,
   reducers: {},
   extraReducers: builder => {
     builder.addMatcher(
-      bookDayWiseService.endpoints.samyakBookDayWisePost.matchFulfilled,
+      BookDayWiseService.endpoints.samyakBookDayWisePost.matchFulfilled,
       (state, {payload}) => {
         state.samyakDetailsBookdayWisePost = payload;
         // console.log('bookDayWisePayload?????????', payload);
@@ -20,6 +20,6 @@ export const bookDayWiseSlice = createSlice({
   },
 });
 
-export const {} = bookDayWiseSlice.actions;
+export const {} = BookDayWiseSlice.actions;
 
-export default bookDayWiseSlice.reducer;
+export default BookDayWiseSlice.reducer;

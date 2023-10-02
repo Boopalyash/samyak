@@ -1,7 +1,7 @@
 import {GET_BOOKING_SLOT_DAYWISE} from '../../utils/URL';
 import {api} from '../../utils/API';
 
-export const bookDayWiseService = api.injectEndpoints({
+export const BookDayWiseService = api.injectEndpoints({
   endpoints: build => ({
     samyakBookDayWisePost: build.mutation<any, any>({
       query: credentials => ({
@@ -14,4 +14,4 @@ export const bookDayWiseService = api.injectEndpoints({
   overrideExisting: true,
 });
 
-export const {useSamyakBookDayWisePostMutation} = bookDayWiseService;
+export const {useSamyakBookDayWisePostMutation} = BookDayWiseService;
