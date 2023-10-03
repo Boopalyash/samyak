@@ -64,3 +64,7 @@ export const SPECIAL_PACKAGE = 'Special_Package';
 
 // Bottom navigation text
 export const CONFIG = 'App_Settings';
+
+// Review
+export const POST_REVIEWS = 'Post_Reviews';
+export const UPDATE_RATINGS = 'Update_Ratings';

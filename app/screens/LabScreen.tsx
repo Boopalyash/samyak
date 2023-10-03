@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
+  Modal,
+  Alert,
 } from 'react-native';
 import SegmentedControlTab from 'react-native-segmented-control-tab';
 import {Calendar} from 'react-native-calendars';
@@ -22,7 +24,6 @@ import {useSamyakRelationshipPostMutation} from '../redux/service/RelationshipSe
 
 const LabScreen = ({navigation}: any) => {
   const [currentStep, setCurrentStep] = useState(1);
-  // const [selectedIndex, setSelectedIndex] = useState('');
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [showChooseTestView, setShowChooseTestView] = useState(true);
   const [showPreferredOptionView, setShowPreferredOptionView] = useState(false);
@@ -37,18 +38,18 @@ const LabScreen = ({navigation}: any) => {
   const [setBoneData] = useState([]);
   const [bookTypeData, setBookTypeData] = useState();
   const [isDataVisible, setIsDataVisible] = useState(false);
-  const [badgeCount, setBadgeCount] = useState(0);
+  const [cartItems, setCartItems] = useState('');
+  const [badgeCount, setBadgeCount] = useState(cartItems.length);
+  const [isModalVisible, setModalVisible] = useState(false);
   const [isInCart, setIsInCart] = useState(false);
   const padZero = (num: any) => (num < 10 ? `0${num}` : `${num}`);
 
-  console.log('showCalender', showCalendar);
   // api for branch
   const [defaultManageBranchAPIReq, defaultManageBranchAPIRes] =
     useSamyakDefaultBranchPostMutation();
 
   // api for  bone profile in stepper 1
   const [boneAPIReq, boneAPIRes] = useSamyakLabChooseBonePostMutation();
-  console.log('boneAPIRes', boneAPIRes);
 
   // api for bookType in stepper 2
   const [booktypeAPIReq, booktypeAPIRes] = useSamyakBookTypePostMutation();
@@ -69,6 +70,7 @@ const LabScreen = ({navigation}: any) => {
     setShowPreferredOptionView(currentStep === 2);
     setShowChoosePatientView(currentStep === 3);
     setShowBookingDetails(currentStep === 4);
+
     const bookTypeObj = {
       userName: '7358722588',
     };
@@ -80,7 +82,6 @@ const LabScreen = ({navigation}: any) => {
       relatioshipAPIReq(bookTypeObj);
     }
   }, [currentStep]);
-  console.log(booktypeAPIRes, 'booktypeAPIRes');
 
   const handleNext = () => {
     setCurrentStep(currentStep + 1);
@@ -199,6 +200,23 @@ const LabScreen = ({navigation}: any) => {
       setBookTypeData(typeOfBookingArray);
     }
   }, [booktypeAPIRes]);
+
+  const handleCartClick = () => {
+    if (badgeCount > 0) {
+      setModalVisible(true);
+    } else {
+      Alert.alert('Cart', 'Cart is Empty');
+    }
+  };
+
+  const handleRemoveItemClick = () => {
+    if (badgeCount > 0) {
+      setCartItems([]);
+      setBadgeCount(0);
+    }
+
+    setModalVisible(false);
+  };
 
   return (
     <ScrollView style={styles.MainContainer}>
@@ -329,15 +347,72 @@ const LabScreen = ({navigation}: any) => {
               placeholder="Select Test"
               placeholderTextColor="#b9c5a0"
             />
-            <Image
-              source={require('../assets/images/addCart.png')}
-              style={styles.CartIcon}
-            />
+            <TouchableOpacity onPress={handleCartClick}>
+              <Image
+                source={require('../assets/images/addCart.png')}
+                style={styles.CartIcon}
+              />
+            </TouchableOpacity>
             {badgeCount > 0 && (
               <View style={styles.notificationBadge}>
                 <Text style={styles.notificationBadgeText}>{badgeCount}</Text>
               </View>
             )}
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={isModalVisible}
+              onRequestClose={() => setModalVisible(false)}>
+              <View style={styles.modalContainer}>
+                <View style={styles.modalBackground}>
+                  <View style={styles.modalContent}>
+                    {badgeCount === 0 ? (
+                      <View style={styles.emptyCartContainer}>
+                        <Text style={styles.emptyCartText}>Cart is Empty</Text>
+                      </View>
+                    ) : (
+                      <View style={styles.testItemContainer}>
+                        <Text style={styles.testName}>BONE PROFILE(MINI)</Text>
+                        <Text style={styles.testPrice}>INR 1</Text>
+                        <TouchableOpacity onPress={handleRemoveItemClick}>
+                          <View style={styles.addToCartContainer1}>
+                            <Image
+                              source={require('../assets/images/addCart.png')}
+                              style={styles.CartIcon}
+                            />
+                            <Text style={styles.addToCartText}>Remove</Text>
+                          </View>
+                        </TouchableOpacity>
+                      </View>
+                    )}
+
+                    {badgeCount > 0 && (
+                      <View style={styles.bottomTextContainer}>
+                        <Text style={styles.bottomText}>
+                          Total Cart Value INR 0
+                        </Text>
+                      </View>
+                    )}
+
+                    {badgeCount > 0 && (
+                      <TouchableOpacity onPress={() => setModalVisible(false)}>
+                        <View style={styles.SubmitButtonView}>
+                          <Text style={styles.ButtonText}>Proceed</Text>
+                        </View>
+                      </TouchableOpacity>
+                    )}
+
+                    {badgeCount > 0 && (
+                      <View style={{marginLeft: 10, marginBottom: 280}}>
+                        <Text style={{color: '#fd1a1b'}}>
+                          Note:*-Indicates Non Discounted Test
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                </View>
+              </View>
+            </Modal>
           </View>
 
           <View
@@ -854,10 +929,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#ffffff',
     padding: 10,
-    borderRadius: 30,
+    borderRadius: 10,
     marginHorizontal: 20,
     borderWidth: 0.3,
-    borderColor: 'black',
+    borderColor: 'grey',
     marginTop: 15,
   },
   searchIcon: {
@@ -881,7 +956,6 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
     tintColor: 'black',
-    right: 30,
   },
   CalenderIcon: {
     width: 30,
@@ -1163,5 +1237,75 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     padding: 15,
     marginTop: -25,
+  },
+  modalContainer: {
+    flex: 1,
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+  },
+  bottomTextContainer: {
+    marginBottom: 20,
+    marginTop: 20,
+  },
+  bottomText: {
+    fontSize: 18,
+    fontWeight: '500',
+    alignSelf: 'center',
+  },
+  SubmitButtonView: {
+    backgroundColor: '#58afff',
+    padding: 15,
+    alignItems: 'center',
+    borderRadius: 30,
+    marginBottom: 20,
+  },
+  ButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  testItemContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  testName: {
+    width: '40%',
+    color: '#686868',
+  },
+  testPrice: {
+    width: '20%',
+    fontWeight: 'bold',
+  },
+
+  addToCartText: {
+    marginLeft: 1,
+  },
+  addToCartContainer1: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 5,
+    borderColor: '#bcc0c7',
+    margin: 10,
+    borderRadius: 5,
+  },
+  emptyCartContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
+  emptyCartText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'red',
   },
 });

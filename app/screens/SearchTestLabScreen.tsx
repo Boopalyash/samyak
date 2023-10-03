@@ -8,11 +8,13 @@ import {
   TouchableOpacity,
   FlatList,
   ScrollView,
+  Modal,
 } from 'react-native';
 import {useSamyakLabSearchTestPostMutation} from '../redux/service/LabSearchTestService';
 
 const SearchTestLabScreen = ({navigation}: any) => {
   const [searchText, setSearchText] = useState('');
+  const [cartItems, setCartItems] = useState('');
   const [searchTestAPIReq, searchTestAPIRes] =
     useSamyakLabSearchTestPostMutation();
 
@@ -42,21 +44,39 @@ const SearchTestLabScreen = ({navigation}: any) => {
     navigation.navigate('Lab');
   };
 
-  const renderItem = ({item}: any) => (
-    <View style={styles.testItemContainer}>
-      <Text style={styles.testName}>{item.Sub_Dept_Name}</Text>
-      <Text style={styles.testPrice}>{item.Amount}</Text>
-      <TouchableOpacity style={styles.addToCartButton}>
-        <View style={styles.addToCartContainer}>
-          <Image
-            source={require('../assets/images/addCart.png')}
-            style={styles.CartIcon}
-          />
-          <Text style={styles.addToCartText}>Add Cart</Text>
-        </View>
-      </TouchableOpacity>
-    </View>
-  );
+  const handleToggleCart = (itemName: string) => {
+    setCartItems(prevCartItems => {
+      if (prevCartItems.includes(itemName)) {
+        return prevCartItems.filter(item => item !== itemName);
+      } else {
+        return [...prevCartItems, itemName];
+      }
+    });
+  };
+
+  const renderItem = ({item}: any) => {
+    const isItemInCart = cartItems.includes(item.Sub_Dept_Name);
+
+    return (
+      <View style={styles.testItemContainer}>
+        <Text style={styles.testName}>{item.Sub_Dept_Name}</Text>
+        <Text style={styles.testPrice}>{item.Amount}</Text>
+        <TouchableOpacity
+          style={styles.addToCartButton}
+          onPress={() => handleToggleCart(item.Sub_Dept_Name)}>
+          <View style={styles.addToCartContainer}>
+            <Image
+              source={require('../assets/images/addCart.png')}
+              style={styles.CartIcon}
+            />
+            <Text style={styles.addToCartText}>
+              {isItemInCart ? 'Remove' : 'Add Cart'}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   return (
     <View style={styles.MainContainer}>
@@ -70,6 +90,7 @@ const SearchTestLabScreen = ({navigation}: any) => {
           </TouchableOpacity>
         </View>
       </View>
+
       <View style={styles.inputContainer}>
         <TouchableOpacity>
           <Image
@@ -87,6 +108,11 @@ const SearchTestLabScreen = ({navigation}: any) => {
           source={require('../assets/images/addCart.png')}
           style={styles.CartIcon}
         />
+        {cartItems.length > 0 && (
+          <View style={styles.notificationBadge}>
+            <Text style={styles.notificationBadgeText}>{cartItems.length}</Text>
+          </View>
+        )}
       </View>
 
       <ScrollView>
@@ -218,5 +244,20 @@ const styles = StyleSheet.create({
     margin: 10,
     padding: 4,
     borderRadius: 5,
+  },
+  notificationBadge: {
+    top: -15,
+    right: -2,
+    minWidth: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: 'red',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  notificationBadgeText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
 });
