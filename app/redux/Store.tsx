@@ -48,6 +48,8 @@ import specialPackage from './slice/SpecialPackageSlice';
 import appSettings from './slice/AppSettingsSlice';
 // import forgetPassword from './slice/forgetPasswordSlice';
 import notificationUpdate from './slice/NotificationUpdateSlice';
+import review from './slice/ReviewSlice';
+import rating from './slice/RatingSlice';
 
 const reducers = combineReducers({
   [api.reducerPath]: api.reducer,
@@ -85,6 +87,8 @@ const reducers = combineReducers({
   appSettings,
   // forgetPassword,
   notificationUpdate,
+  review,
+  rating
 });
 
 const persistConfig = {

@@ -12,7 +12,6 @@ const BookingNavigation = () => {
       initialRouteName="Bookings"
       screenOptions={{headerShown: false}}>
       <stack.Screen name="Bookings" component={BookingScreen} />
-      <stack.Screen name="Wallet" component={WalletScreen} /> 
     </stack.Navigator>
   );
 };

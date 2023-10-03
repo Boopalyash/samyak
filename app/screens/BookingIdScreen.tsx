@@ -6,17 +6,34 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  ScrollView,
+  Alert,
 } from 'react-native';
 import {useRoute} from '@react-navigation/native';
 import moment from 'moment';
+import {Rating} from 'react-native-ratings';
 import {useSamyakDefaultBranchPostMutation} from '../redux/service/DefaultBranchService';
 import {useFocusEffect} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useSamyakReviewPostMutation} from '../redux/service/ReviewService';
+import {useSamyakRatingPostMutation} from '../redux/service/RatingService';
 
 const BookingIdScreen = ({navigation}: any) => {
   const [selectedbranch, setSelectedBranch] = useState('RT-MAIN(PORUR)');
+  const [setReview] = useState([]);
+  const [reviewText, setReviewText] = useState('');
+  const [userRating, setUserRating] = useState(0);
+
+  // to display the branch
   const [defaultManageBranchAPIReq, defaultManageBranchAPIRes] =
     useSamyakDefaultBranchPostMutation();
+
+  // to display the review
+  const [reviewAPIReq, reviewAPIRes] = useSamyakReviewPostMutation();
+
+  // to display the ratings
+  const [ratingAPIReq, ratingAPIRes] = useSamyakRatingPostMutation();
+
   const route = useRoute();
   const userDetails = route.params;
 
@@ -62,8 +79,47 @@ const BookingIdScreen = ({navigation}: any) => {
     }
   }, [defaultManageBranchAPIRes]);
 
+  // to display review
+  const handlePostReview = () => {
+    const reviewData = {
+      userName: '7358722588',
+      Post_Review: reviewText,
+      Booking_Type: 'W',
+      Booking_No: userDetails?.userDetails?.Booking_No,
+      Firm_No: '01',
+      Booking_Date: formattedBookingDate.format('YYYY/MM/DD'),
+    };
+    reviewAPIReq(reviewData);
+  };
+
+  // to display rating
+  const handleRatingCompleted = (rating: number) => {
+    setUserRating(rating);
+  };
+  const handlePostRating = async () => {
+    const ratingData = {
+      userName: '7358722588',
+      Booking_Type: 'H',
+      Booking_No: userDetails?.userDetails?.Booking_No,
+      Firm_No: '01',
+      Booking_Date: formattedBookingDate.format('YYYY/MM/DD'),
+      Rating_Type: 'P',
+      Rating_No: userRating.toString(),
+    };
+    ratingAPIReq(ratingData);
+  };
+  useEffect(() => {
+    if (ratingAPIRes?.isSuccess && ratingAPIRes?.data?.Code === 200) {
+      Alert.alert('Success', ratingAPIRes?.data?.Message[0]?.Message, [
+        {text: 'OK'},
+      ]);
+    } else if (ratingAPIRes?.isError) {
+      Alert.alert('Error', 'Failed to update rating', [{text: 'OK'}]);
+    }
+  }, [ratingAPIRes]);
+
   return (
-    <View style={styles.MainContainer}>
+    <ScrollView style={styles.MainContainer}>
       <View style={styles.container}>
         <View style={styles.row}>
           <Text style={styles.BookingText}>
@@ -177,18 +233,62 @@ const BookingIdScreen = ({navigation}: any) => {
         </Text>
       </View>
 
+      <View style={styles.Star}>
+        <Text style={{color: '#696969', alignSelf: 'center'}}>
+          How would you like to rate the phlebotomist?
+        </Text>
+        <View>
+          <Rating
+            type="star"
+            ratingCount={5}
+            imageSize={20}
+            showRating
+            startingValue={userRating}
+            onFinishRating={handleRatingCompleted}
+          />
+        </View>
+        <TouchableOpacity onPress={handlePostRating}>
+          <View style={styles.RatingView}>
+            <Text style={{color: 'black', top: 5, alignSelf: 'center'}}>
+              Submit Rating
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+
       <View style={styles.outerView}>
         <Text style={{left: 10, fontWeight: 'bold'}}>Post your review</Text>
         <View style={{flexDirection: 'row'}}>
           <View style={styles.innerView}>
-            <TextInput style={styles.input} placeholder="" multiline />
+            <TextInput
+              style={styles.input}
+              placeholder="Write your review here"
+              multiline
+              value={reviewText}
+              onChangeText={text => setReviewText(text)}
+            />
           </View>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handlePostReview}>
             <View style={styles.PostView}>
-              <Text style={{color: 'black', top: 5}}>post</Text>
+              <Text style={{color: 'black', top: 5}}>Post</Text>
             </View>
           </TouchableOpacity>
         </View>
+
+        {reviewAPIRes?.isSuccess && reviewAPIRes?.data?.Code === 200 && (
+          <View>
+            {reviewAPIRes?.data?.Message?.map((item: any, index: number) => (
+              <Text style={{marginTop: 10, fontSize: 14}} key={index}>
+                {item.Message}
+              </Text>
+            ))}
+          </View>
+        )}
+        {setReview.map((reviewMessage, index) => (
+          <Text style={{marginTop: 10, fontSize: 14}} key={index}>
+            {reviewMessage}
+          </Text>
+        ))}
       </View>
 
       <View
@@ -205,7 +305,7 @@ const BookingIdScreen = ({navigation}: any) => {
           <Text style={styles.buttonTexts}>Back</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -287,22 +387,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: '#f7f7f7',
-    padding: 15,
-    margin: 20,
+    padding: 10,
+    margin: 15,
+  },
+  Star: {
+    backgroundColor: '#f7f7f7',
+    padding: 10,
+    margin: 15,
   },
   AmoutPayableView: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: '#f2f2f2',
-    margin: 20,
+    margin: 15,
     paddingVertical: 20,
-    padding: 15,
-    marginTop: -25,
+    padding: 10,
+    marginTop: -20,
   },
   outerView: {
     backgroundColor: '#f5f5f5',
     padding: 10,
-    margin: 20,
+    margin: 15,
   },
   innerView: {
     padding: 5,
@@ -322,6 +427,12 @@ const styles = StyleSheet.create({
     marginTop: 30,
     borderRadius: 10,
     left: 10,
+  },
+  RatingView: {
+    backgroundColor: '#dddbdb',
+    height: 30,
+    marginTop: 10,
+    borderRadius: 10,
   },
   buttons: {
     flexDirection: 'row',

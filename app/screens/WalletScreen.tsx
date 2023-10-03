@@ -1,9 +1,36 @@
-import React from 'react';
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Modal,
+} from 'react-native';
 
 const WalletScreen = ({navigation}: any) => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedButton, setSelectedButton] = useState('');
+
   const handleLeftChevron = () => {
-    navigation.navigate('Booking');
+    setIsModalVisible(true);
+  };
+
+  const closeModal = (shouldNavigate: boolean) => {
+    setIsModalVisible(false);
+    if (shouldNavigate) {
+      navigation.navigate('Bookings');
+    }
+  };
+
+  const handleYes = () => {
+    closeModal(true);
+    setSelectedButton('yes');
+  };
+
+  const handleNo = () => {
+    closeModal(false);
+    setSelectedButton('no');
   };
 
   return (
@@ -14,6 +41,34 @@ const WalletScreen = ({navigation}: any) => {
           style={styles.Left_chevron}
         />
       </TouchableOpacity>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={() => closeModal(false)}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>Cancel Payment</Text>
+            <Text style={{fontSize: 12, color: 'blue'}}>
+              Do you really want to cancel the payment. Are you sure?
+            </Text>
+            <View style={styles.buttonContainer1}>
+              <TouchableOpacity
+                onPress={() => closeModal(false)}
+                style={styles.button}>
+                <Text style={styles.buttonText1}>NO</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => closeModal(true)}
+                style={styles.button}>
+                <Text style={styles.buttonText1}>YES</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       <View style={styles.PaypalContainer}>
         <View style={styles.RowContainer}>
@@ -261,5 +316,39 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 5,
     right: 2,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    width: '100%',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+    height: 300,
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 20,
+  },
+  buttonContainer1: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    marginTop: 20,
+  },
+  button: {
+    backgroundColor: 'black',
+    paddingVertical: 15,
+    paddingHorizontal: 50,
+    borderRadius: 5,
+  },
+  buttonText1: {
+    fontSize: 16,
+    fontWeight:'bold',
+    color: 'white',
+    alignSelf: 'center',
   },
 });

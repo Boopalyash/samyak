@@ -68,3 +68,6 @@ export const CONFIG = 'App_Settings';
 //opt
 export const OTP_SEND = 'OTP_Send';
 
+// Review
+export const POST_REVIEWS = 'Post_Reviews';
+export const UPDATE_RATINGS = 'Update_Ratings';
