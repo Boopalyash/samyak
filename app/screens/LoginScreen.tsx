@@ -8,6 +8,7 @@ import {
   Image,
   Alert,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 
 // components and utilities
@@ -24,12 +25,14 @@ const LoginScreen = ({navigation}: any) => {
   const [passwordError, setPasswordError] = useState('');
   const [isError, setIsError] = useState(false);
   const [userDetails] = useState<any>();
+  const [loading, setLoading] = useState(false);
 
   // Api functions
   const [loginAPIReq, LoginAPIRes] = useSamyakLoginPostMutation();
   const [bookingAPIReq] = useSamyakBookingListPostMutation();
 
   useEffect(() => {
+    setLoading(LoginAPIRes.isLoading);
     if (LoginAPIRes.isSuccess) {
       navigation.navigate('Bottom', {
         userDetails,
@@ -119,7 +122,7 @@ const LoginScreen = ({navigation}: any) => {
           <Text style={styles.errorText}>{passwordError}</Text>
         ) : null}
 
-        <TouchableOpacity onPress={()=>navigation.navigate("forgetpassword")}>
+        <TouchableOpacity onPress={() => navigation.navigate('forgetpassword')}>
           <Text style={styles.forgotPasswordText}>Forgot Password ?</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={handleLogIn} style={styles.loginButton}>
@@ -155,6 +158,11 @@ const LoginScreen = ({navigation}: any) => {
             </TouchableOpacity>
           </View>
         </View>
+        {loading && (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="blue" />
+          </View>
+        )}
       </View>
     </View>
   );
@@ -248,4 +256,15 @@ const styles = StyleSheet.create({
     marginTop: 10,
     alignSelf: 'center',
   },
+  loadingContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
+
+

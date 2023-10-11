@@ -379,6 +379,8 @@ PODS:
     - glog
   - react-native-date-picker (4.3.1):
     - React-Core
+  - react-native-maps (1.8.0):
+    - React-Core
   - react-native-orientation (3.1.3):
     - React
   - react-native-orientation-locker (1.5.0):
@@ -559,6 +561,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
+  - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-orientation (from `../node_modules/react-native-orientation`)
   - react-native-orientation-locker (from `../node_modules/react-native-orientation-locker`)
   - react-native-render-html (from `../node_modules/react-native-render-html`)
@@ -651,6 +654,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/logger"
   react-native-date-picker:
     :path: "../node_modules/react-native-date-picker"
+  react-native-maps:
+    :path: "../node_modules/react-native-maps"
   react-native-orientation:
     :path: "../node_modules/react-native-orientation"
   react-native-orientation-locker:
@@ -740,6 +745,7 @@ SPEC CHECKSUMS:
   React-jsinspector: b511447170f561157547bc0bef3f169663860be7
   React-logger: c5b527272d5f22eaa09bb3c3a690fee8f237ae95
   react-native-date-picker: e3076cde716b718fc5c6bd9b5abd63d640d2a350
+  react-native-maps: f699e0753c22c4d5c3a44d03895b193a4dbca6c2
   react-native-orientation: f1caf84d65f1a4fd4511a18f2b924e634ad7a628
   react-native-orientation-locker: 851f6510d8046ea2f14aa169b1e01fcd309a94ba
   react-native-render-html: 984dfe2294163d04bf5fe25d7c9f122e60e05ebe

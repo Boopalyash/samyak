@@ -217,6 +217,10 @@ const LabScreen = ({navigation}: any) => {
     setModalVisible(false);
   };
 
+  const handleAddAddress = () => {
+    navigation.navigate('AddAddress');
+  };
+
   return (
     <ScrollView style={styles.MainContainer}>
       {/* lab Test view */}
@@ -679,7 +683,7 @@ const LabScreen = ({navigation}: any) => {
 
           <View style={styles.ChooseAddressView}>
             <Text style={{fontSize: 20}}>Choose Address</Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleAddAddress}>
               <Text style={{color: '#0f97f5', fontSize: 20}}>Add</Text>
             </TouchableOpacity>
           </View>

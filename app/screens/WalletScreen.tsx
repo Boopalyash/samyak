@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -8,9 +8,9 @@ import {
   Modal,
 } from 'react-native';
 
-const WalletScreen = ({navigation}: any) => {
+const WalletScreen = ({navigation, route}: any) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedButton, setSelectedButton] = useState('');
+  const {dueAmount} = route.params;
 
   const handleLeftChevron = () => {
     setIsModalVisible(true);
@@ -19,18 +19,8 @@ const WalletScreen = ({navigation}: any) => {
   const closeModal = (shouldNavigate: boolean) => {
     setIsModalVisible(false);
     if (shouldNavigate) {
-      navigation.navigate('Bookings');
+      navigation.navigate('PaymentFailure');
     }
-  };
-
-  const handleYes = () => {
-    closeModal(true);
-    setSelectedButton('yes');
-  };
-
-  const handleNo = () => {
-    closeModal(false);
-    setSelectedButton('no');
   };
 
   return (
@@ -78,7 +68,7 @@ const WalletScreen = ({navigation}: any) => {
           />
           <View style={styles.TextColumn}>
             <Text style={styles.PayText}>pay</Text>
-            <Text style={styles.AmountText}>$ 400.00</Text>
+            <Text style={styles.AmountText}>$ {dueAmount}.00</Text>
           </View>
           <TouchableOpacity style={styles.ButtonContainer}>
             <Text style={styles.ButtonText}>View Details</Text>
@@ -224,13 +214,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#515256',
     borderRadius: 6,
     padding: 6,
-    marginLeft: 50,
+    marginLeft: 60,
   },
   ButtonIcon: {
     width: 15,
     height: 15,
     marginLeft: 5,
     tintColor: 'white',
+    alignSelf: 'center',
   },
   ButtonText: {
     color: 'white',
@@ -347,7 +338,7 @@ const styles = StyleSheet.create({
   },
   buttonText1: {
     fontSize: 16,
-    fontWeight:'bold',
+    fontWeight: 'bold',
     color: 'white',
     alignSelf: 'center',
   },

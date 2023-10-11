@@ -19,6 +19,7 @@ import UploadPrescriptionScreen from '../screens/UploadPrescriptionScreen';
 import NotificationScreen from '../screens/NotificationScreen';
 import ForgetPasswordScreen from '../screens/ForgetPasswordScreen';
 import WalletScreen from '../screens/WalletScreen';
+import PaymentFailureScreen from '../screens/PaymentFailureScreen';
 
 const stack = createStackNavigator();
 
@@ -52,6 +53,7 @@ const ApplicationNavigation = () => {
         />
         <stack.Screen name="Notification" component={NotificationScreen} />
         <stack.Screen name="Wallet" component={WalletScreen} />
+        <stack.Screen name="PaymentFailure" component={PaymentFailureScreen} />
       </stack.Navigator>
     </NavigationContainer>
   );

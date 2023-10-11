@@ -1,12 +1,11 @@
 // imports
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   Image,
   FlatList,
-  Alert,
   TouchableOpacity,
 } from 'react-native';
 import {useRoute} from '@react-navigation/native';
@@ -24,8 +23,8 @@ const BookingScreen = ({navigation}: any) => {
   // API functions
   const [bookingAPIReq] = useSamyakBookingListPostMutation();
 
-  const handlePaynow = () => {
-    navigation.navigate('Wallet');
+  const handlePaynow = (dueAmount: number) => {
+    navigation.navigate('Wallet', {dueAmount});
   };
 
   useEffect(() => {
@@ -35,17 +34,6 @@ const BookingScreen = ({navigation}: any) => {
   const bookingData = useSelector(
     (state: RootState) => state.bookingList.samyakDetailsBookingListPost,
   );
-
-  // display when there is no data
-  // useEffect(() => {
-  //   if (
-  //     !bookingData ||
-  //     !bookingData[0]?.Booking_Detail ||
-  //     bookingData[0]?.Booking_Detail.length === 0
-  //   ) {
-  //     Alert.alert('No Data Found', 'There is no booking data to display.');
-  //   }
-  // }, [bookingData]);
 
   const CardItem = ({item}: any) => {
     const formattedBookingDate = moment(item.Booking_Date, 'YYYY/MM/DD').format(
@@ -118,7 +106,7 @@ const BookingScreen = ({navigation}: any) => {
 
             <View style={{flexDirection: 'row'}}>
               {item.Paid_Amount === 0.0 ? ( // Check if Paid_Amount is 0.0
-                <TouchableOpacity onPress={handlePaynow}>
+                <TouchableOpacity onPress={() => handlePaynow(item.Due_Amount)}>
                   <View style={styles.ButtonPayNowView}>
                     <Text style={styles.ButtonPayNow}>Pay Now</Text>
                   </View>
@@ -185,7 +173,7 @@ const BookingScreen = ({navigation}: any) => {
           renderItem={({item}) => <CardItem item={item} />}
           ListEmptyComponent={() => {
             return (
-              <View style={{alignSelf:'center'}}> 
+              <View style={{alignSelf: 'center'}}>
                 <Text>No Data Found</Text>
               </View>
             );

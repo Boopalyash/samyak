@@ -19,6 +19,8 @@ import {useSamyakReviewPostMutation} from '../redux/service/ReviewService';
 import {useSamyakRatingPostMutation} from '../redux/service/RatingService';
 
 const BookingIdScreen = ({navigation}: any) => {
+  const route = useRoute();
+  const userDetails = route.params;
   const [selectedbranch, setSelectedBranch] = useState('RT-MAIN(PORUR)');
   const [setReview] = useState([]);
   const [reviewText, setReviewText] = useState('');
@@ -33,9 +35,6 @@ const BookingIdScreen = ({navigation}: any) => {
 
   // to display the ratings
   const [ratingAPIReq, ratingAPIRes] = useSamyakRatingPostMutation();
-
-  const route = useRoute();
-  const userDetails = route.params;
 
   const handleButtonPresss = () => {
     navigation.navigate('Bookings');
