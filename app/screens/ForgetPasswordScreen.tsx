@@ -9,9 +9,60 @@ import {
   Alert,
   ToastAndroid,
 } from 'react-native';
+
 import {useSamyakForgetPasswordPostMutation} from '../redux/service/ForgetPasswordService';
 
-const ForgetPasswordScreen = ({navigation}: any) => {
+// const ForgetPasswordScreen = ({navigation}: any) => {
+//   const [mobileNumber, setMobileNumber] = useState('');
+//   const toastStyle = {
+//     backgroundColor: 'red',
+//     color: 'white',
+//   };
+//   const [forgetPasswordReq, forgetPasswordRes] =
+//     useSamyakForgetPasswordPostMutation();
+
+//   const handleMobileNumberChange = (text: string) => {
+//     const numericRegex = /^[0-9]*$/;
+//     if (numericRegex.test(text)) {
+//       setMobileNumber(text);
+//     }
+//   };
+
+//   const handleOTP = () => {
+//     forgetPasswordReq({
+//       userName: '9849390103',
+//       Mobile_No: mobileNumber,
+//     });
+//   };
+//   console.log(mobileNumber, 'no');
+//   const showAlert = (title: string, message: string) => {
+//     Alert.alert(title, message, [], {cancelable: false});
+//   };
+//   useEffect(() => {
+//     if (forgetPasswordRes.isSuccess) {
+//       // showAlert('Success', forgetPasswordRes?.data?.message);
+// console.log(forgetPasswordRes,"forgetPasswordRes")
+//       console.log('success',forgetPasswordRes);
+//       ToastAndroid.showWithGravity(
+//         "Successfully OTP send to your mobile number",
+//         ToastAndroid.LONG,
+//         ToastAndroid.TOP,
+//         toastStyle
+//       );
+//     } else if (forgetPasswordRes.isError && forgetPasswordRes?.error?.data) {
+//       ToastAndroid.showWithGravity(
+//         forgetPasswordRes?.error?.data?.Message[0]?.Message,
+//         ToastAndroid.LONG,
+//         ToastAndroid.TOP,
+//         toastStyle
+//       );
+//       console.log('success',forgetPasswordRes);
+
+//       // showAlert('Error', forgetPasswordRes?.error?.data?.message);
+//     }
+//   }, [forgetPasswordRes]);
+
+const ForgetPasswordScreen = ({navigation}) => {
   const [mobileNumber, setMobileNumber] = useState('');
   const toastStyle = {
     backgroundColor: 'red',
@@ -20,7 +71,16 @@ const ForgetPasswordScreen = ({navigation}: any) => {
   const [forgetPasswordReq, forgetPasswordRes] =
     useSamyakForgetPasswordPostMutation();
 
-  const handleMobileNumberChange = (text: string) => {
+  const showToast = message => {
+    ToastAndroid.showWithGravity(
+      message,
+      ToastAndroid.LONG,
+      ToastAndroid.TOP,
+      toastStyle,
+    );
+  };
+
+  const handleMobileNumberChange = text => {
     const numericRegex = /^[0-9]*$/;
     if (numericRegex.test(text)) {
       setMobileNumber(text);
@@ -29,35 +89,16 @@ const ForgetPasswordScreen = ({navigation}: any) => {
 
   const handleOTP = () => {
     forgetPasswordReq({
-      userName: '7358722588',
+      userName: '9849390103',
       Mobile_No: mobileNumber,
     });
   };
-  console.log(mobileNumber, 'no');
-  const showAlert = (title: string, message: string) => {
-    Alert.alert(title, message, [], {cancelable: false});
-  };
+
   useEffect(() => {
     if (forgetPasswordRes.isSuccess) {
-      // showAlert('Success', forgetPasswordRes?.data?.message);
-console.log(forgetPasswordRes,"forgetPasswordRes")
-      console.log('success',forgetPasswordRes);
-      ToastAndroid.showWithGravity(
-        "Successfully OTP send to your mobile number",
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-        toastStyle
-      );
-    } else if (forgetPasswordRes.isError && forgetPasswordRes?.error?.data) {
-      ToastAndroid.showWithGravity(
-        forgetPasswordRes?.error?.data?.Message[0]?.Message,
-        ToastAndroid.LONG,
-        ToastAndroid.TOP,
-        toastStyle
-      );
-      console.log('success',forgetPasswordRes);
-
-      // showAlert('Error', forgetPasswordRes?.error?.data?.message);
+      showToast('Successfully OTP sent to your mobile number');
+    } else if (forgetPasswordRes.isError && forgetPasswordRes.error.data) {
+      showToast(forgetPasswordRes.error.data.Message[0].Message);
     }
   }, [forgetPasswordRes]);
 
@@ -79,7 +120,7 @@ console.log(forgetPasswordRes,"forgetPasswordRes")
       </View>
       <View style={styles.card}>
         <Image
-          source={require('../assets/images/samyakLogo.png')}
+          source={require('../assets/images/Samyak_Logo.png')}
           style={styles.cardImage}
           resizeMode="contain"
         />
@@ -98,7 +139,7 @@ console.log(forgetPasswordRes,"forgetPasswordRes")
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity onPress={()=>navigation.navigate("Login")}>
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
           <View style={styles.BackToView}>
             <Text style={styles.BackToText}>Back to Login</Text>
           </View>

@@ -1,6 +1,5 @@
 import React from 'react';
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
-import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 
 const PaymentFailureScreen = ({navigation}: any) => {
   const handleProfile = () => {

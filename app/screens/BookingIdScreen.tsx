@@ -58,7 +58,7 @@ const BookingIdScreen = ({navigation}: any) => {
         .then(value => {
           if (value) {
             defaultManageBranchAPIReq({
-              userName: '7358722588',
+              userName: '9849390103',
               Default_Firm_No: value,
             });
           }
@@ -81,7 +81,7 @@ const BookingIdScreen = ({navigation}: any) => {
   // to display review
   const handlePostReview = () => {
     const reviewData = {
-      userName: '7358722588',
+      userName: '9849390103',
       Post_Review: reviewText,
       Booking_Type: 'W',
       Booking_No: userDetails?.userDetails?.Booking_No,
@@ -95,17 +95,24 @@ const BookingIdScreen = ({navigation}: any) => {
   const handleRatingCompleted = (rating: number) => {
     setUserRating(rating);
   };
+
   const handlePostRating = async () => {
-    const ratingData = {
-      userName: '7358722588',
-      Booking_Type: 'H',
-      Booking_No: userDetails?.userDetails?.Booking_No,
-      Firm_No: '01',
-      Booking_Date: formattedBookingDate.format('YYYY/MM/DD'),
-      Rating_Type: 'P',
-      Rating_No: userRating.toString(),
-    };
-    ratingAPIReq(ratingData);
+    if (userRating === 0) {
+      Alert.alert('Error', 'Please select a rating before submitting.', [
+        {text: 'OK'},
+      ]);
+    } else {
+      const ratingData = {
+        userName: '9849390103',
+        Booking_Type: 'H',
+        Booking_No: userDetails?.userDetails?.Booking_No,
+        Firm_No: '01',
+        Booking_Date: formattedBookingDate.format('YYYY/MM/DD'),
+        Rating_Type: 'P',
+        Rating_No: userRating.toString(),
+      };
+      ratingAPIReq(ratingData);
+    }
   };
   useEffect(() => {
     if (ratingAPIRes?.isSuccess && ratingAPIRes?.data?.Code === 200) {
@@ -170,7 +177,7 @@ const BookingIdScreen = ({navigation}: any) => {
           Booking ID: {userDetails?.userDetails?.Booking_No}
         </Text>
         <Text style={{fontSize: 14, color: '#797979'}}>
-          {dayOfWeek}, {formattedBookingDate.format('MMMM D YYYY')},{' '}
+          {dayOfWeek}, {formattedBookingDate.format('MMMM D YYYY')},
           {formattedBookingTime}
         </Text>
       </View>

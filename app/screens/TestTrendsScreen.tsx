@@ -40,13 +40,13 @@ const TestTrendsScreen = ({navigation}: any) => {
     useSamyakTrendsPatientListPostMutation();
 
   const manageMembersObj = {
-    userName: '7358722588',
+    userName: '9849390103',
   };
 
   // useEffect for ref_value
   useEffect(() => {
     const testTrendsTestObj = {
-      userName: '7358722588',
+      userName: '9849390103',
       Pt_Code: '0100511265',
       Test_Code: '000245',
       Test_Sub_Code: '',
@@ -67,7 +67,7 @@ const TestTrendsScreen = ({navigation}: any) => {
   // useEffect for Patient
   useEffect(() => {
     const trendsPatientListObj = {
-      userName: '7358722588',
+      userName: '9849390103',
       Pt_Code: '0100511265',
     };
     patientListAPIReq(trendsPatientListObj)
@@ -116,7 +116,7 @@ const TestTrendsScreen = ({navigation}: any) => {
         .then(value => {
           if (value) {
             defaultManageBranchAPIReq({
-              userName: '7358722588',
+              userName: '9849390103',
               Default_Firm_No: value,
             });
           }

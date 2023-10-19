@@ -1,3 +1,4 @@
+//imports
 import React, {useEffect, useState} from 'react';
 import {
   View,
@@ -10,12 +11,14 @@ import {
 import {useSelector} from 'react-redux';
 import {RootState} from '../redux/Store';
 import HTMLRender from 'react-native-render-html';
-import {useSamyakDefaultBranchPostMutation} from '../redux/service/DefaultBranchService';
 import {useFocusEffect} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+// components and utilities
+import {useSamyakDefaultBranchPostMutation} from '../redux/service/DefaultBranchService';
 
 const AboutSettingScreen = ({navigation}: any) => {
   const [selectedbranch, setSelectedBranch] = useState('RT-MAIN(PORUR)');
+  // api
   const [defaultManageBranchAPIReq, defaultManageBranchAPIRes] =
     useSamyakDefaultBranchPostMutation();
   const aboutUsData = useSelector(
@@ -30,13 +33,14 @@ const AboutSettingScreen = ({navigation}: any) => {
     navigation.navigate('Settings');
   };
 
+  // useEffect for default Branch
   useFocusEffect(
     React.useCallback(() => {
       AsyncStorage.getItem('selectedBranch')
         .then(value => {
           if (value) {
             defaultManageBranchAPIReq({
-              userName: '7358722588',
+              userName: '9849390103',
               Default_Firm_No: value,
             });
           }
@@ -138,6 +142,7 @@ const AboutSettingScreen = ({navigation}: any) => {
     </View>
   );
 };
+
 export default AboutSettingScreen;
 const styles = StyleSheet.create({
   MainContainer: {

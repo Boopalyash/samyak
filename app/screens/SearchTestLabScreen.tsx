@@ -19,7 +19,7 @@ const SearchTestLabScreen = ({navigation}: any) => {
     useSamyakLabSearchTestPostMutation();
 
   const searchTestObj = {
-    userName: '7358722588',
+    userName: '9849390103',
     Service_Type: 'T',
     Search_Text: searchText,
   };

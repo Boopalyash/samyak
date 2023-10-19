@@ -304,7 +304,7 @@ const AddManageMembersSettingScreen = ({navigation}: any) => {
   // useEffect for title
   useEffect(() => {
     const titleObj = {
-      userName: '7358722588',
+      userName: '9849390103',
     };
     titleAPIReq(titleObj)
       .unwrap()
@@ -314,7 +314,7 @@ const AddManageMembersSettingScreen = ({navigation}: any) => {
         }
       });
     const relationshipObj = {
-      userName: '7358722588',
+      userName: '9849390103',
     };
     relatioshipAPIReq(relationshipObj)
       .unwrap()
@@ -324,7 +324,7 @@ const AddManageMembersSettingScreen = ({navigation}: any) => {
         }
       });
     const genderObj = {
-      userName: '7358722588',
+      userName: '9849390103',
     };
     genderAPIReq(genderObj)
       .unwrap()
@@ -349,7 +349,7 @@ const AddManageMembersSettingScreen = ({navigation}: any) => {
         Pt_Name: fullName,
         Relationship_Code: patientRelationCode,
         Title_Code: titleCode,
-        UserName: 7358722588,
+        UserName: 9849390103,
       };
       await addMemberAPIReq(addMemberObj);
     }
@@ -363,7 +363,7 @@ const AddManageMembersSettingScreen = ({navigation}: any) => {
     if (addMemberAPIRes.isSuccess) {
       showAlert('Success', addMemberAPIRes?.data?.Message[0]?.Description);
       const manageMembersObj = {
-        userName: '7358722588',
+        userName: '9849390103',
       };
       manageMembersAPIReq(manageMembersObj);
       navigation.navigate('ManageMembers');

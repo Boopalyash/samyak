@@ -66,7 +66,7 @@ const EditMembersScreen = ({navigation}: any) => {
     if (editMemberAPIRes.isSuccess) {
       showAlert('Success', 'Patient Details Updated Successfully');
       const manageMembersObj = {
-        userName: '7358722588',
+        userName: '9849390103',
       };
       manageMembersAPIReq(manageMembersObj);
       navigation.navigate('ManageMembers');
@@ -78,7 +78,7 @@ const EditMembersScreen = ({navigation}: any) => {
   // useEffect for  gender api
   useEffect(() => {
     const genderObj = {
-      userName: '7358722588',
+      userName: '9849390103',
     };
     genderAPIReq(genderObj)
       .unwrap()
@@ -96,7 +96,7 @@ const EditMembersScreen = ({navigation}: any) => {
   // useEffect for relationship
   useEffect(() => {
     const relationshipObj = {
-      userName: '7358722588',
+      userName: '9849390103',
     };
     relatioshipAPIReq(relationshipObj)
       .unwrap()
@@ -114,7 +114,7 @@ const EditMembersScreen = ({navigation}: any) => {
   // useEffect for title
   useEffect(() => {
     const titleObj = {
-      userName: '7358722588',
+      userName: '9849390103',
     };
     titleAPIReq(titleObj)
       .unwrap()
@@ -142,7 +142,7 @@ const EditMembersScreen = ({navigation}: any) => {
       Pt_Name: fullName,
       Relationship_Code: patientRelationCode,
       Title_Code: titleCode,
-      UserName: 7358722588,
+      UserName: 9849390103,
     };
 
     await editMemberAPIReq(addMemberObj);

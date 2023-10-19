@@ -4,7 +4,6 @@ import {NavigationContainer} from '@react-navigation/native';
 import LoginScreen from '../screens/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import BottomNavigation from './BottomNavigation';
-import SettingNavigation from './SettingNavigation';
 import BookingIdScreen from '../screens/BookingIdScreen';
 import AddAddressSettingScreen from '../screens/AddAddressSettingScreen';
 import ManageBranchSettingScreen from '../screens/ManageBranchSettingScreen';

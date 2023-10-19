@@ -31,7 +31,7 @@ const BottomNavigation = () => {
   // useEffect for bottom navigation text
   useEffect(() => {
     const appSettingsObj = {
-      userName: '7358722588',
+      userName: '9849390103',
     };
     appSettingsAPIReq(appSettingsObj);
   }, []);
