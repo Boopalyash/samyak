@@ -44,7 +44,7 @@ const EditAddressScreen = ({navigation}: any) => {
       Pincode: pincode,
       Latitude: latitude,
       Longitude: longitude,
-      Username: '7358722588',
+      Username: '9849390103',
       Landmark: landmark,
     };
     await updateAddressAPIReq(updateAddressObj);
@@ -56,7 +56,7 @@ const EditAddressScreen = ({navigation}: any) => {
       showAlert('Success', 'Address Updated Successfully');
 
       const showAddressObj = {
-        userName: '7358722588',
+        userName: '9849390103',
       };
       getAddressAPIReq(showAddressObj);
       navigation.navigate('ManageAddress');

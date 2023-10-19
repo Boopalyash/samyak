@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   FlatList,
+  ScrollView,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {useSamyakPromotionPostMutation} from '../redux/service/DashBoardPromotionService';
@@ -40,7 +41,6 @@ const DashBoardScreen = ({navigation}: any) => {
 
   // to display bone profile
   const [boneAPIReq, boneAPIRes] = useSamyakLabChooseBonePostMutation();
-  console.log('boneAPIRes', boneAPIRes);
 
   //api for special package
   const [specialPackageAPIReq, specialPackageAPIRes] =
@@ -49,8 +49,8 @@ const DashBoardScreen = ({navigation}: any) => {
   // useEffect for promotion
   useEffect(() => {
     const promotionObj = {
-      userName: '7358722588',
-      password: 'Ram@12345678',
+      userName: '9849390103',
+      password: 'Sandeep@123',
     };
     promotionAPIReq(promotionObj);
   }, []);
@@ -62,7 +62,7 @@ const DashBoardScreen = ({navigation}: any) => {
   // useEffect for health
   useEffect(() => {
     const healthObj = {
-      userName: '7358722588',
+      userName: '9849390103',
       password: 'Ram@12345678',
     };
     healthAPIReq(healthObj);
@@ -86,7 +86,7 @@ const DashBoardScreen = ({navigation}: any) => {
         .then(value => {
           if (value) {
             defaultManageBranchAPIReq({
-              userName: '7358722588',
+              userName: '9849390103',
               Default_Firm_No: value,
             });
           }
@@ -109,7 +109,7 @@ const DashBoardScreen = ({navigation}: any) => {
   // useEffect for special package
   useEffect(() => {
     const specialPackageObj = {
-      userName: '7358722588',
+      userName: '9849390103',
     };
     specialPackageAPIReq(specialPackageObj)
       .unwrap()
@@ -123,7 +123,7 @@ const DashBoardScreen = ({navigation}: any) => {
   // useEffect for bone profile
   useEffect(() => {
     const boneObj = {
-      userName: '7358722588',
+      userName: '9849390103',
       Service_Code: 'P00360',
     };
     boneAPIReq(boneObj)
@@ -135,7 +135,7 @@ const DashBoardScreen = ({navigation}: any) => {
       });
   }, []);
 
-  // default show the package offer screen
+  // defaultly show the package offer screen while enter
   useEffect(() => {
     setShowPackageOffer(true);
     setShowPromotion(false);
@@ -562,3 +562,4 @@ const styles = StyleSheet.create({
 });
 
 export default DashBoardScreen;
+

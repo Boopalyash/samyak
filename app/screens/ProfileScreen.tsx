@@ -26,7 +26,7 @@ const ProfileScreen = ({navigation}: any) => {
 
   useEffect(() => {
     const profileObj = {
-      userName: '7358722588',
+      userName: '9849390103',
     };
     profileAPIReq(profileObj);
   }, []);
@@ -34,7 +34,7 @@ const ProfileScreen = ({navigation}: any) => {
   const handleHome = async () => {
     if (isEditMode) {
       const updateProfileObj = {
-        userName: '7358722588',
+        userName: '9849390103',
         password: password,
         Name: fullName,
         User_Email_Id: email,

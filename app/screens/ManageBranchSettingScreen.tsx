@@ -28,7 +28,7 @@ const ManageBranchSettingScreen = ({navigation}: any) => {
 
   useEffect(() => {
     const manageBranchObj = {
-      userName: '7358722588',
+      userName: '9849390103',
     };
 
     manageBranchAPIReq(manageBranchObj)
@@ -44,7 +44,7 @@ const ManageBranchSettingScreen = ({navigation}: any) => {
     if (defaultManageBranchAPIRes?.isSuccess) {
     }
   }, [defaultManageBranchAPIRes]);
-  
+
   const openDropdown = () => {
     setShowOptions(true);
   };
@@ -61,7 +61,7 @@ const ManageBranchSettingScreen = ({navigation}: any) => {
     setSelectedOptionIndex(option);
     closeDropdown();
     const defaultBranchobj = {
-      userName: '7358722588',
+      userName: '9849390103',
       Default_Firm_No: number,
     };
     defaultManageBranchAPIReq(defaultBranchobj);

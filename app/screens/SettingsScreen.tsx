@@ -26,7 +26,7 @@ const SettingsScreen = ({navigation}: any) => {
   // To display the contactUs screen
   useEffect(() => {
     const contactUsObj = {
-      userName: '7358722588',
+      userName: '9849390103',
     };
     contactUsAPIReq(contactUsObj);
   }, []);
@@ -34,7 +34,7 @@ const SettingsScreen = ({navigation}: any) => {
   // To display the aboutUs screen
   useEffect(() => {
     const aboutUsObj = {
-      userName: '7358722588',
+      userName: '9849390103',
     };
     aboutUsAPIReq(aboutUsObj);
   }, []);
@@ -42,7 +42,7 @@ const SettingsScreen = ({navigation}: any) => {
   // To display the notificationCount
   useEffect(() => {
     const notificationCountObj = {
-      userName: '7358722588',
+      userName: '9849390103',
     };
     notificationAPIReq(notificationCountObj);
   }, []);
@@ -53,7 +53,7 @@ const SettingsScreen = ({navigation}: any) => {
         .then(value => {
           if (value) {
             defaultManageBranchAPIReq({
-              userName: '7358722588',
+              userName: '9849390103',
               Default_Firm_No: value,
             });
           }
@@ -238,6 +238,7 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
     marginLeft: 20,
+    // marginRight: 20,
     top: 20,
   },
   LocationView: {

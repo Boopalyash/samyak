@@ -31,7 +31,7 @@ const ManageAddressSettingsScreen = ({navigation}: any) => {
   );
   console.log(addressSelector, 'addressData');
   const showAddressObj = {
-    userName: '7358722588',
+    userName: '9849390103',
   };
   console.log(deleteAddressAPIRes, 'deleteAddressAPIRes');
 
@@ -60,7 +60,7 @@ const ManageAddressSettingsScreen = ({navigation}: any) => {
   }, [getAddressAPIRes, addressSelector]);
   const handleDelete = item => {
     let credentials = {
-      UserName: '7358722588',
+      UserName: '9849390103',
       Address_Type: '01',
     };
     deleteAddressAPIReq(credentials);
@@ -84,7 +84,7 @@ const ManageAddressSettingsScreen = ({navigation}: any) => {
         .then(value => {
           if (value) {
             defaultManageBranchAPIReq({
-              userName: '7358722588',
+              userName: '9849390103',
               Default_Firm_No: value,
             });
           }

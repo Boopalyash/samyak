@@ -32,7 +32,7 @@ const ManageMembersSettingScreen = ({navigation}: any) => {
   );
 
   const manageMembersObj = {
-    userName: '7358722588',
+    userName: '9849390103',
   };
 
   useEffect(() => {
@@ -55,7 +55,7 @@ const ManageMembersSettingScreen = ({navigation}: any) => {
 
   const handleDelete = item => {
     let credentials = {
-      UserName: '7358722588',
+      UserName: '9849390103',
       Pt_Code: item?.Pt_Code,
     };
     deletePatientAPIReq(credentials);
@@ -83,7 +83,7 @@ const ManageMembersSettingScreen = ({navigation}: any) => {
         .then(value => {
           if (value) {
             defaultManageBranchAPIReq({
-              userName: '7358722588',
+              userName: '9849390103',
               Default_Firm_No: value,
             });
           }

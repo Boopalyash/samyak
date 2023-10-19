@@ -58,7 +58,7 @@ const AddAddressSettingScreen = ({navigation}: any) => {
       Pincode: pincode,
       Latitude: latitude,
       Longitude: longitude,
-      Username: 7358722588,
+      Username: 9849390103,
       Landmark: '',
     };
     await addAddressAPIReq(addAddressObj);
@@ -68,7 +68,7 @@ const AddAddressSettingScreen = ({navigation}: any) => {
     if (addAddressAPIRes.isSuccess && addAddressAPIRes?.data?.Code === 200) {
       showAlert('Success', 'Address Added Successfully');
       const manageAddressObj = {
-        userName: '7358722588',
+        userName: '9849390103',
       };
       getAddressAPIReq(manageAddressObj);
       navigation.navigate('ManageAddress', {getAddressAPIRes});

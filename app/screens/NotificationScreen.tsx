@@ -20,7 +20,7 @@ const NotificationScreen = ({navigation}: any) => {
   // useEffect to display the list of notifications
   useEffect(() => {
     const notificationListObj = {
-      userName: '7358722588',
+      userName: '9849390103',
     };
     notificationListAPIReq(notificationListObj);
   }, []);

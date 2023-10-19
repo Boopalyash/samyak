@@ -64,7 +64,7 @@ const LabScreen = ({navigation}: any) => {
   //api for show patient relation in stepper 3
   const [relatioshipAPIReq, relatioshipAPIRes] =
     useSamyakRelationshipPostMutation();
-  const [dayWiseApiReq, dayWiseApiRes] = useSamyakBookDayWisePostMutation();
+  const [dayWiseApiReq] = useSamyakBookDayWisePostMutation();
   useEffect(() => {
     setShowChooseTestView(currentStep === 1);
     setShowPreferredOptionView(currentStep === 2);
@@ -72,7 +72,7 @@ const LabScreen = ({navigation}: any) => {
     setShowBookingDetails(currentStep === 4);
 
     const bookTypeObj = {
-      userName: '7358722588',
+      userName: '9849390103',
     };
     if (currentStep === 2) {
       booktypeAPIReq(bookTypeObj);
@@ -120,7 +120,7 @@ const LabScreen = ({navigation}: any) => {
         .then(value => {
           if (value) {
             defaultManageBranchAPIReq({
-              userName: '7358722588',
+              userName: '9849390103',
               Default_Firm_No: value,
             });
           }
@@ -143,7 +143,7 @@ const LabScreen = ({navigation}: any) => {
   // useEffect for special package
   useEffect(() => {
     const specialPackageObj = {
-      userName: '7358722588',
+      userName: '9849390103',
     };
     specialPackageAPIReq(specialPackageObj)
       .unwrap()
@@ -157,7 +157,7 @@ const LabScreen = ({navigation}: any) => {
   // useEffect for bone profile
   useEffect(() => {
     const boneObj = {
-      userName: '7358722588',
+      userName: '9849390103',
       Service_Code: 'P00360',
     };
     boneAPIReq(boneObj)
