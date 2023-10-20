@@ -14,6 +14,7 @@ import {useSamyakManageMembersListPostMutation} from '../redux/service/ManageMem
 import {useSamyakDefaultBranchPostMutation} from '../redux/service/DefaultBranchService';
 import {useFocusEffect} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Orientation from 'react-native-orientation';
 
 const TestTrendsScreen = ({navigation}: any) => {
   const [setTestData] = useState([]);
@@ -25,6 +26,7 @@ const TestTrendsScreen = ({navigation}: any) => {
   const [selectedTestList, setSelectedTestlList] = useState('');
   const [selectedImage, setSelectedImage] = useState('graph');
   const [selectedbranch, setSelectedBranch] = useState('RT-MAIN(PORUR)');
+  const [currentOrientation, setCurrentOrientation] = useState('PORTRAIT');
 
   // api for to display branch
   const [defaultManageBranchAPIReq, defaultManageBranchAPIRes] =
@@ -59,7 +61,25 @@ const TestTrendsScreen = ({navigation}: any) => {
         }
       });
   }, []);
-
+  useEffect(() => {
+    const orientationDidChange = (orientation) => {
+      setCurrentOrientation(orientation);
+    };
+  
+    Orientation.addOrientationListener(orientationDidChange);
+  
+    return () => {
+      Orientation.removeOrientationListener(orientationDidChange);
+    };
+  }, []);
+  const handleScreenRotation = () => {
+    if (currentOrientation === 'PORTRAIT') {
+      Orientation.lockToLandscape();
+    } else {
+      Orientation.lockToPortrait();
+    }
+  };
+  
   const handleArrowImagePress = index => {
     setShowTestDropDown(prevState => !prevState);
   };
@@ -345,7 +365,7 @@ const TestTrendsScreen = ({navigation}: any) => {
         </View>
       )}
 
-      <TouchableOpacity>
+      <TouchableOpacity onPress={handleScreenRotation}>
         <View style={{alignSelf: 'flex-end', right: 20, marginTop: 30}}>
           <Image
             source={require('../assets/images/rotation.png')}

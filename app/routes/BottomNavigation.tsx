@@ -46,7 +46,7 @@ const BottomNavigation = () => {
               component={
                 item?.Menu_Desc === 'Bookings'
                   ? BookingNavigation
-                  : item?.Menu_Desc === 'Lab Test'
+                  : item?.Menu_Desc === 'Consultation'
                   ? LabNavigation
                   : item?.Menu_Desc === 'Dashboard'
                   ? DashBoardScreen
