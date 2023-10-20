@@ -61,17 +61,19 @@ const TestTrendsScreen = ({navigation}: any) => {
         }
       });
   }, []);
+
   useEffect(() => {
-    const orientationDidChange = (orientation) => {
+    const orientationDidChange = orientation => {
       setCurrentOrientation(orientation);
     };
-  
+
     Orientation.addOrientationListener(orientationDidChange);
-  
+
     return () => {
       Orientation.removeOrientationListener(orientationDidChange);
     };
   }, []);
+
   const handleScreenRotation = () => {
     if (currentOrientation === 'PORTRAIT') {
       Orientation.lockToLandscape();
@@ -79,7 +81,7 @@ const TestTrendsScreen = ({navigation}: any) => {
       Orientation.lockToPortrait();
     }
   };
-  
+
   const handleArrowImagePress = index => {
     setShowTestDropDown(prevState => !prevState);
   };

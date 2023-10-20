@@ -12,15 +12,15 @@ import {useSamyakProfilePostMutation} from '../redux/service/ProfileService';
 import {useSamyakProfileUpdatePostMutation} from '../redux/service/ProfileUpdateService';
 
 const ProfileScreen = ({navigation}: any) => {
-  const [profileAPIReq, profileAPIRes] = useSamyakProfilePostMutation();
-
   const [fullName, setFullName] = useState();
-  const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+  const [password] = useState('');
   const [dob, setDOB] = useState('');
   const [mobileNumber, setMobileNumber] = useState('');
   const [isEditMode, setIsEditMode] = useState(false);
-
+  // api display profile details
+  const [profileAPIReq, profileAPIRes] = useSamyakProfilePostMutation();
+  //api for edit profile details
   const [updateProfileAPIReq, updateProfileAPIRes] =
     useSamyakProfileUpdatePostMutation();
 
@@ -54,6 +54,7 @@ const ProfileScreen = ({navigation}: any) => {
     }
   }, [profileAPIRes]);
 
+  //useEffect to display the success message after successful
   useEffect(() => {
     if (updateProfileAPIRes.isSuccess) {
       console.log('success');
