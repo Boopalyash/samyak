@@ -14,9 +14,9 @@ import {useSamyakManageMembersListPostMutation} from '../redux/service/ManageMem
 import {useSamyakDefaultBranchPostMutation} from '../redux/service/DefaultBranchService';
 import {useFocusEffect} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Orientation from 'react-native-orientation';
-
+import { OrientationLocker, PORTRAIT, LANDSCAPE } from "react-native-orientation-locker";
 const TestTrendsScreen = ({navigation}: any) => {
+  const [showVideo, setShowVideo] = useState(true);
   const [setTestData] = useState([]);
   const [setPatientListData] = useState([]);
   const [displayGraph, setDisplayGraph] = useState(true);
@@ -61,26 +61,6 @@ const TestTrendsScreen = ({navigation}: any) => {
         }
       });
   }, []);
-
-  useEffect(() => {
-    const orientationDidChange = orientation => {
-      setCurrentOrientation(orientation);
-    };
-
-    Orientation.addOrientationListener(orientationDidChange);
-
-    return () => {
-      Orientation.removeOrientationListener(orientationDidChange);
-    };
-  }, []);
-
-  const handleScreenRotation = () => {
-    if (currentOrientation === 'PORTRAIT') {
-      Orientation.lockToLandscape();
-    } else {
-      Orientation.lockToPortrait();
-    }
-  };
 
   const handleArrowImagePress = index => {
     setShowTestDropDown(prevState => !prevState);
@@ -366,8 +346,12 @@ const TestTrendsScreen = ({navigation}: any) => {
           </View>
         </View>
       )}
-
-      <TouchableOpacity onPress={handleScreenRotation}>
+<OrientationLocker
+        orientation={PORTRAIT}
+        onChange={orientation => console.log('onChange', orientation)}
+        onDeviceChange={orientation => console.log('onDeviceChange', orientation)}
+      />
+      <TouchableOpacity onPress={() => setShowVideo(!showVideo)}>
         <View style={{alignSelf: 'flex-end', right: 20, marginTop: 30}}>
           <Image
             source={require('../assets/images/rotation.png')}
@@ -375,6 +359,14 @@ const TestTrendsScreen = ({navigation}: any) => {
           />
         </View>
       </TouchableOpacity>
+      {showVideo && (
+        <View>
+          <OrientationLocker orientation={LANDSCAPE} />
+          {/* <View style={{ width: 320, height: 180, backgroundColor: '#ccc' }}>
+            <Text>Landscape video goes here</Text>
+          </View> */}
+        </View>
+      )}
     </ScrollView>
   );
 };
